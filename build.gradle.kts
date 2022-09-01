@@ -46,7 +46,7 @@ tasks.withType<KotlinCompile> {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "dev.datlag.dxvkotool.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.AppImage, TargetFormat.Rpm, TargetFormat.Deb)
             packageName = "DXVKoTool"
