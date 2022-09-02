@@ -39,6 +39,13 @@ dependencies {
     implementation("org.rauschig:jarchivelib:1.2.0")
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("androidx.compose.material3:material3:1.0.0-beta01")
+        force("androidx.compose.material:material:1.3.0-beta01")
+    }
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 

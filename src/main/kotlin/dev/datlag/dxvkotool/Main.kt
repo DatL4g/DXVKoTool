@@ -35,6 +35,9 @@ import dev.datlag.dxvkotool.ui.compose.FileDialog
 import dev.datlag.dxvkotool.ui.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.compose.material.SnackbarHostState
+
+val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
 @Composable
 @Preview
@@ -45,26 +48,28 @@ fun App() {
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-    AppTheme {
-        Scaffold(
-            topBar = {
-                ToolBar()
-            },
-            scaffoldState = scaffoldState,
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
-
+    CompositionLocalProvider(LocalSnackbarHost provides scaffoldState.snackbarHostState) {
+        AppTheme {
+            Scaffold(
+                topBar = {
+                    ToolBar()
                 },
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary) {
-                    Icon(Icons.Filled.Add, StringRes.get().add)
+                scaffoldState = scaffoldState,
+                floatingActionButton = {
+                    FloatingActionButton(onClick = {
+
+                    },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary) {
+                        Icon(Icons.Filled.Add, StringRes.get().add)
+                    }
                 }
-            }
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
-                GameList()
+                Column(
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+                ) {
+                    GameList()
+                }
             }
         }
     }
@@ -74,6 +79,7 @@ fun App() {
 @Preview
 fun ToolBar() {
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHost = LocalSnackbarHost.current
 
     TopAppBar(
         title = {
@@ -98,6 +104,9 @@ fun ToolBar() {
             }
             IconButton(onClick = {
                 SteamIO.reload(coroutineScope)
+                coroutineScope.launch(Dispatchers.IO) {
+                    snackbarHost.showSnackbar("Reloading games")
+                }
             }) {
                 Icon(
                     Icons.Filled.Refresh,
@@ -187,13 +196,13 @@ fun GameCard(game: Game) {
 
 @Composable
 @Preview
-fun GameCache(game: Game, entry: Map.Entry<DxvkStateCache, CacheInfo>) {
+fun GameCache(game: Game, cache: DxvkStateCache) {
     val coroutineScope = rememberCoroutineScope()
-    val (cache, info) = entry
     val isExportOpen = remember { mutableStateOf(false) }
+    val info by cache.info.collectAsState()
 
     if (isExportOpen.value) {
-        FileDialog(cache.file!!.name) { destFile ->
+        FileDialog(cache.file.name) { destFile ->
             isExportOpen.value = false
             if (destFile != null) {
                 cache.writeTo(destFile, false)
@@ -204,7 +213,7 @@ fun GameCache(game: Game, entry: Map.Entry<DxvkStateCache, CacheInfo>) {
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Column(modifier = Modifier.fillMaxWidth(0.5F).fillMaxHeight()) {
             Text(
-                text = cache.file!!.name,
+                text = cache.file.name,
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 2,
                 fontWeight = FontWeight.Bold,
@@ -248,7 +257,7 @@ fun GameCache(game: Game, entry: Map.Entry<DxvkStateCache, CacheInfo>) {
                     )
                 }
                 is CacheInfo.Url -> {
-                    if (info.downloadUrl.isNullOrEmpty()) {
+                    if ((info as CacheInfo.Url).downloadUrl.isNullOrEmpty()) {
                         UpdateButtonInfo(
                             text = StringRes.get().unavailable,
                             icon = Icons.Filled.Clear,
@@ -274,8 +283,8 @@ fun GameCache(game: Game, entry: Map.Entry<DxvkStateCache, CacheInfo>) {
                 }
                 is CacheInfo.Merged -> {
                     UpdateButtonInfo(
-                        text = if (info.success) StringRes.get().merged else StringRes.get().error,
-                        icon = if (info.success) Icons.Filled.Check else Icons.Filled.Clear,
+                        text = if ((info as CacheInfo.Merged).success) StringRes.get().merged else StringRes.get().error,
+                        icon = if ((info as CacheInfo.Merged).success) Icons.Filled.Check else Icons.Filled.Clear,
                         isDownload = false,
                         isMerge = false
                     )
@@ -299,36 +308,9 @@ fun GameCache(game: Game, entry: Map.Entry<DxvkStateCache, CacheInfo>) {
             }
             Button(onClick = {
                 if (updateInfo.isDownload) {
-                    coroutineScope.launch(Dispatchers.IO) {
-                        val downloadUrl = (info as? CacheInfo.Url?)?.downloadUrl
-                        if (!downloadUrl.isNullOrEmpty()) {
-                            run {
-                                val caches = game.caches.value.toMutableMap()
-                                caches[cache] = CacheInfo.Loading.Download
-                                game.caches.emit(caches)
-                            }
-                            val fileResult = cache.downloadFromUrl(downloadUrl).getOrNull()
-                            if (fileResult != null) {
-                                val caches = game.caches.value.toMutableMap()
-                                caches[cache] = CacheInfo.Download(fileResult)
-                                game.caches.emit(caches)
-                            }
-                        }
-                    }
+                    cache.downloadCache(coroutineScope)
                 } else if (updateInfo.isMerge) {
-                    coroutineScope.launch(Dispatchers.IO) {
-                        val downloadedFile = (info as? CacheInfo.Download?)?.file
-                        if (downloadedFile != null) {
-                            val parsedCache = DxvkStateCache.fromFile(downloadedFile).getOrNull()
-                            if (parsedCache != null) {
-                                val newCache = cache.combine(parsedCache).getOrNull()
-                                val finished = newCache?.writeTo(newCache.file!!, true)?.isSuccess
-                                val caches = game.caches.value.toMutableMap()
-                                caches[cache] = CacheInfo.Merged(finished ?: false)
-                                game.caches.emit(caches)
-                            }
-                        }
-                    }
+                    game.mergeCache(coroutineScope, cache)
                 }
             }, modifier = Modifier.fillMaxWidth(), enabled = updateInfo.isDownload || updateInfo.isMerge) {
                 Icon(updateInfo.icon, updateInfo.text, modifier = Modifier.size(ButtonDefaults.IconSize))

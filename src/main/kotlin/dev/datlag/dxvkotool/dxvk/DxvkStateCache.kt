@@ -4,9 +4,12 @@ import dev.datlag.dxvkotool.common.openWriteChannel
 import dev.datlag.dxvkotool.common.readU32
 import dev.datlag.dxvkotool.common.writeU32
 import dev.datlag.dxvkotool.io.FileExtractor
-import dev.datlag.dxvkotool.other.DXVK
-import dev.datlag.dxvkotool.other.DXVKException
-import dev.datlag.dxvkotool.other.ReadErrorType
+import dev.datlag.dxvkotool.model.CacheInfo
+import dev.datlag.dxvkotool.other.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
@@ -14,8 +17,10 @@ import java.nio.channels.FileChannel
 data class DxvkStateCache(
     val header: Header,
     val entries: List<DxvkStateCacheEntry>,
-    val file: File?
+    val file: File
 ) {
+
+    val info: MutableStateFlow<CacheInfo> = MutableStateFlow(CacheInfo.Loading.Url)
 
     fun writeTo(file: File, backup: Boolean) = runCatching {
         var backupFile = file
@@ -62,7 +67,10 @@ data class DxvkStateCache(
 
     fun combine(other: DxvkStateCache) = runCatching {
         if (header.version != other.header.version) {
-            throw IllegalArgumentException()
+            throw DXVKException.VersionMismatch(
+                header.version,
+                other.header.version
+            )
         }
         val newList: MutableList<DxvkStateCacheEntry> = mutableListOf()
         newList.addAll(entries)
@@ -70,12 +78,25 @@ data class DxvkStateCache(
         DxvkStateCache(
             header,
             newList.distinctBy { it.hash.array().contentHashCode() },
-            file ?: other.file
+            file
         )
     }
 
     suspend fun downloadFromUrl(url: String) = runCatching {
-        FileExtractor.downloadToTempFile(file!!.nameWithoutExtension, url).getOrThrow()
+        FileExtractor.downloadToTempFile(file.nameWithoutExtension, url).getOrThrow()
+    }
+
+    fun downloadCache(scope: CoroutineScope) = runCatching {
+        val downloadUrl = (info.value as? CacheInfo.Url?)?.downloadUrl
+        if (downloadUrl.isNullOrEmpty()) {
+            throw DownloadException.NoDownloadUrl
+        }
+        scope.launch(Dispatchers.IO) {
+            info.emit(CacheInfo.Loading.Download)
+
+            val fileResult = downloadFromUrl(downloadUrl).getOrNull() ?: throw DownloadException.InvalidFile
+            info.emit(CacheInfo.Download(fileResult))
+        }
     }
 
     data class Header(
@@ -124,7 +145,7 @@ data class DxvkStateCache(
             cache
         }
 
-        fun fromReader(reader: FileChannel, file: File?): Result<DxvkStateCache> = runCatching {
+        fun fromReader(reader: FileChannel, file: File): Result<DxvkStateCache> = runCatching {
             val entries: MutableList<DxvkStateCacheEntry> = mutableListOf()
             val header = Header.fromReader(reader).getOrThrow()
 

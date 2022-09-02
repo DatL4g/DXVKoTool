@@ -24,19 +24,15 @@ data class RepoStructure(
             }
         }
 
-        val associated = game.caches.value.keys.map { entry ->
-            return@map if (entry.file == null) {
-                entry to null
-            } else {
-                entry to (matchingItems.firstOrNull { item ->
-                    item.path.endsWith(entry.file.name, true)
-                } ?: matchingItems.firstOrNull { item ->
-                    item.path.endsWith("${entry.file.name}.md", true)
-                } ?: matchingItems.firstOrNull { item ->
-                    item.path.endsWith("${entry.file.name}.txt", true)
-                })
-            }
-        }.toMap()
+        val associated = game.caches.value.associateWith { entry ->
+            (matchingItems.firstOrNull { item ->
+                item.path.endsWith(entry.file.name, true)
+            } ?: matchingItems.firstOrNull { item ->
+                item.path.endsWith("${entry.file.name}.md", true)
+            } ?: matchingItems.firstOrNull { item ->
+                item.path.endsWith("${entry.file.name}.txt", true)
+            })
+        }
 
         return associated
     }
@@ -92,7 +88,7 @@ data class StructureItemContent(
 }
 
 fun Collection<RepoStructure>.findMatchingGameItem(game: Game): Map<DxvkStateCache, StructureItem?> {
-    return game.caches.value.keys.associateWith { cache ->
+    return game.caches.value.associateWith { cache ->
         this.firstNotNullOfOrNull { it.findMatchingGameItem(game)[cache] }
     }
 }

@@ -88,7 +88,7 @@ object SteamIO {
                         Game.Steam(
                             it.key,
                             it.value,
-                            MutableStateFlow(caches.associateWith { CacheInfo.Loading.Url })
+                            MutableStateFlow(caches)
                         )
                     }
                 }

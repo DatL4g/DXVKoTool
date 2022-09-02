@@ -5,6 +5,8 @@ sealed class DXVKException : Exception() {
     object UnexpectedEndOfFile : DXVKException()
     object InvalidEntry : DXVKException()
     data class ReadError(val type: ReadErrorType) : DXVKException()
+
+    data class VersionMismatch(val current: UInt, val new: UInt) : DXVKException()
 }
 
 sealed class ReadErrorType {
@@ -12,4 +14,18 @@ sealed class ReadErrorType {
     object U32 : ReadErrorType()
     object U24 : ReadErrorType()
     object U8 : ReadErrorType()
+}
+
+sealed class DownloadException : Exception() {
+
+    object NoDownloadUrl : DownloadException()
+
+    object InvalidFile : DownloadException()
+
+}
+
+sealed class MergeException : Exception() {
+
+    object NoFileFound : MergeException()
+
 }
