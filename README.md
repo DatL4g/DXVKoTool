@@ -29,6 +29,9 @@ Additionally it's my first time working with compose 😬.
   - not Steam games only
 - Don't show ```None found``` during first availability check
 - Add information dialog
+- Package a single AppImage
+  - not the whole directory
+  - HELP WANTED
 
 ## Contributing
 

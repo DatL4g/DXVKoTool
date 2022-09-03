@@ -9,7 +9,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
-val appVersion = "1.0.0"
+val appVersion = "0.1.0"
 
 group = "dev.datlag"
 version = appVersion
@@ -58,6 +58,10 @@ compose.desktop {
             targetFormats(TargetFormat.AppImage, TargetFormat.Rpm, TargetFormat.Deb)
             packageName = "DXVKoTool"
             packageVersion = appVersion
+            outputBaseDir.set(project.buildDir.resolve("release"))
+            description = "The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches"
+            copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
+            licenseFile.set(project.file("LICENSE"))
         }
     }
 }
