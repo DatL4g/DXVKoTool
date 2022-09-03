@@ -18,17 +18,17 @@ Additionally it's my first time working with compose 😬.
     - Could fix broken caches
 - Merge with found and downloaded caches
   - Creates backup file (no worries)
+  - Check entry size difference on downloaded files
+    - only mergable if more entries available
+- Update entry size text after merge
+- WIP: Show more information in Snackbar on actions
   
 **Planned functionality:**
 
 - Add other games on your own
   - not Steam games only
-- Check entry size difference on downloaded files
-  - only mergable if more entries available
-- Update entry size text after merge
 - Don't show ```None found``` during first availability check
 - Add information dialog
-- Show more information in Snackbar on actions
 
 ## Contributing
 
