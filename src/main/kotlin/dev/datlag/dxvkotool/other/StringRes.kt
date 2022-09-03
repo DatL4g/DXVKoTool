@@ -20,6 +20,11 @@ interface AppStringRes {
     val merged: String
     val error: String
     val downloading: String
+    val more: String
+    val mergeLocalFile: String
+    val load: String
+    val save: String
+    val connectRepoItem: String
 }
 
 object StringRes {
@@ -44,6 +49,12 @@ object StringRes {
         override val merged: String = "Merged"
         override val error: String = "Error"
         override val downloading: String = "Downloading"
+
+        override val more: String = "More"
+        override val mergeLocalFile: String = "Merge local file"
+        override val load: String = "Load"
+        override val save: String = "Save"
+        override val connectRepoItem: String = "Connect repository item"
     }
 
     fun get() = en

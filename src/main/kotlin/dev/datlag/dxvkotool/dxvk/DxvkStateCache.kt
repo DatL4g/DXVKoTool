@@ -95,8 +95,24 @@ data class DxvkStateCache(
             info.emit(CacheInfo.Loading.Download)
 
             val fileResult = downloadFromUrl(downloadUrl).getOrNull() ?: throw DownloadException.InvalidFile
-            info.emit(CacheInfo.Download(fileResult))
+            val cache = fromFile(fileResult).getOrNull()
+            info.emit(if (cache != null) {
+                CacheInfo.Download.Cache(fileResult, cache)
+            } else {
+                CacheInfo.Download.NoCache(fileResult)
+            })
         }
+    }
+
+    fun loadLocalFile(scope: CoroutineScope, loadFile: File) = scope.launch(Dispatchers.IO) {
+        info.emit(CacheInfo.Loading.Local)
+
+        val cache = fromFile(loadFile).getOrNull()
+        info.emit(if (cache != null) {
+            CacheInfo.Download.Cache(loadFile, cache)
+        } else {
+            CacheInfo.Download.NoCache(loadFile)
+        })
     }
 
     data class Header(

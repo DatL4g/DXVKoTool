@@ -208,6 +208,82 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     var isMenuOpen by remember { mutableStateOf(false) }
     var isLoadLocalFileOpen by remember { mutableStateOf(false) }
 
+    val updateInfo = when (info) {
+        is CacheInfo.Loading.Url -> {
+            UpdateButtonInfo(
+                text = StringRes.get().loading,
+                icon = Icons.Filled.HourglassBottom,
+                isDownload = false,
+                isMerge = false
+            )
+        }
+        is CacheInfo.Loading.Download -> {
+            UpdateButtonInfo(
+                text = StringRes.get().downloading,
+                icon = Icons.Filled.HourglassBottom,
+                isDownload = false,
+                isMerge = false
+            )
+        }
+        is CacheInfo.Loading.Local -> {
+            UpdateButtonInfo(
+                text = StringRes.get().loading,
+                icon = Icons.Filled.HourglassBottom,
+                isDownload = false,
+                isMerge = false
+            )
+        }
+        is CacheInfo.None -> {
+            UpdateButtonInfo(
+                text = StringRes.get().noneFound,
+                icon = Icons.Filled.Clear,
+                isDownload = false,
+                isMerge = false
+            )
+        }
+        is CacheInfo.Url -> {
+            if ((info as CacheInfo.Url).downloadUrl.isNullOrEmpty()) {
+                UpdateButtonInfo(
+                    text = StringRes.get().unavailable,
+                    icon = Icons.Filled.Clear,
+                    isDownload = false,
+                    isMerge = false
+                )
+            } else {
+                UpdateButtonInfo(
+                    text = StringRes.get().download,
+                    icon = Icons.Filled.FileDownload,
+                    isDownload = true,
+                    isMerge = false
+                )
+            }
+        }
+        is CacheInfo.Download.Cache -> {
+            UpdateButtonInfo(
+                text = StringRes.get().merge,
+                icon = Icons.Filled.MergeType,
+                isDownload = false,
+                isMerge = true
+            )
+        }
+        is CacheInfo.Download.NoCache -> {
+            UpdateButtonInfo(
+                text = StringRes.get().unknown,
+                icon = Icons.Filled.QuestionAnswer,
+                isDownload = false,
+                isMerge = false
+            )
+        }
+        is CacheInfo.Merged -> {
+            UpdateButtonInfo(
+                text = if ((info as CacheInfo.Merged).success) StringRes.get().merged else StringRes.get().error,
+                icon = if ((info as CacheInfo.Merged).success) Icons.Filled.Check else Icons.Filled.Clear,
+                isDownload = false,
+                isMerge = false
+            )
+        }
+    }
+
     if (isExportOpen) {
         SaveFileDialog(cache.file.name) { destFile ->
             isExportOpen = false
@@ -221,9 +297,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
         LoadFileDialog { loadFile ->
             isLoadLocalFileOpen = false
             if (loadFile != null) {
-                coroutineScope.launch(Dispatchers.IO) {
-                    cache.info.emit(CacheInfo.Download(loadFile))
-                }
+                cache.loadLocalFile(coroutineScope, loadFile)
             }
         }
     }
@@ -249,76 +323,6 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
             )
         }
         Column(modifier = Modifier.fillMaxSize()) {
-            val updateInfo = when (info) {
-                is CacheInfo.Loading.Url -> {
-                    UpdateButtonInfo(
-                        text = StringRes.get().loading,
-                        icon = Icons.Filled.HourglassBottom,
-                        isDownload = false,
-                        isMerge = false
-                    )
-                }
-                is CacheInfo.Loading.Download -> {
-                    UpdateButtonInfo(
-                        text = StringRes.get().downloading,
-                        icon = Icons.Filled.HourglassBottom,
-                        isDownload = false,
-                        isMerge = false
-                    )
-                }
-                is CacheInfo.None -> {
-                    UpdateButtonInfo(
-                        text = StringRes.get().noneFound,
-                        icon = Icons.Filled.Clear,
-                        isDownload = false,
-                        isMerge = false
-                    )
-                }
-                is CacheInfo.Url -> {
-                    if ((info as CacheInfo.Url).downloadUrl.isNullOrEmpty()) {
-                        UpdateButtonInfo(
-                            text = StringRes.get().unavailable,
-                            icon = Icons.Filled.Clear,
-                            isDownload = false,
-                            isMerge = false
-                        )
-                    } else {
-                        UpdateButtonInfo(
-                            text = StringRes.get().download,
-                            icon = Icons.Filled.FileDownload,
-                            isDownload = true,
-                            isMerge = false
-                        )
-                    }
-                }
-                is CacheInfo.Download -> {
-                    UpdateButtonInfo(
-                        text = StringRes.get().merge,
-                        icon = Icons.Filled.MergeType,
-                        isDownload = false,
-                        isMerge = true
-                    )
-                }
-                is CacheInfo.Merged -> {
-                    UpdateButtonInfo(
-                        text = if ((info as CacheInfo.Merged).success) StringRes.get().merged else StringRes.get().error,
-                        icon = if ((info as CacheInfo.Merged).success) Icons.Filled.Check else Icons.Filled.Clear,
-                        isDownload = false,
-                        isMerge = false
-                    )
-                }
-                else -> {
-                    UpdateButtonInfo(
-                        text = StringRes.get().unknown,
-                        icon = Icons.Filled.QuestionAnswer,
-                        isDownload = false,
-                        isMerge = false
-                    )
-                }
-            }
-
-
-
             Button(onClick = {
                 isExportOpen = true
             }, modifier = Modifier.fillMaxWidth()) {
@@ -334,7 +338,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                         game.mergeCache(coroutineScope, cache)
                     }
                 },
-                    modifier = Modifier.weight(2F),
+                    modifier = Modifier.weight(1F),
                     enabled = updateInfo.isDownload || updateInfo.isMerge,
                     shape = Shape.LeftRoundedShape
                 ) {
@@ -351,15 +355,23 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                         isMenuOpen = false
                         isLoadLocalFileOpen = true
                     }, enabled = true) {
-                        Icon(Icons.Filled.InsertDriveFile, "Merge local file")
-                        Text("Merge local file")
+                        Icon(Icons.Filled.InsertDriveFile, StringRes.get().mergeLocalFile)
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(StringRes.get().mergeLocalFile)
+                    }
+                    DropdownMenuItem(onClick = {
+                        isMenuOpen = false
+                    }, enabled = false) {
+                        Icon(Icons.Filled.Link, StringRes.get().connectRepoItem)
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(StringRes.get().connectRepoItem)
                     }
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
                 Button(onClick = {
                     isMenuOpen = true
                 }, shape = Shape.RightRoundedShape) {
-                    Icon(Icons.Filled.ExpandMore, "More", modifier = Modifier.size(ButtonDefaults.IconSize))
+                    Icon(Icons.Filled.ExpandMore, StringRes.get().more, modifier = Modifier.size(ButtonDefaults.IconSize))
                 }
             }
             Button(onClick = {

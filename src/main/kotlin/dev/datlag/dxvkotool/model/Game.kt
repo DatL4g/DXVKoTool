@@ -35,11 +35,10 @@ sealed class Game(
     }
 
     fun mergeCache(scope: CoroutineScope, cache: DxvkStateCache) = runCatching {
-        val mergeFile = (cache.info.value as? CacheInfo.Download?)?.file ?: throw MergeException.NoFileFound
+        val downloadCache = (cache.info.value as? CacheInfo.Download.Cache?)?.cache ?: throw MergeException.NoFileFound
 
         scope.launch(Dispatchers.IO) {
-            val mergeCache = DxvkStateCache.fromFile(mergeFile).getOrThrow()
-            val combinedCache = cache.combine(mergeCache).getOrThrow()
+            val combinedCache = cache.combine(downloadCache).getOrThrow()
             val combineResult = combinedCache.writeTo(combinedCache.file, true).isSuccess
             val currentCaches = caches.value.toMutableList()
             val cacheIndex = currentCaches.indexOf(cache)

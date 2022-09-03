@@ -2,6 +2,7 @@ package dev.datlag.dxvkotool.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.AwtWindow
+import dev.datlag.dxvkotool.other.StringRes
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
@@ -13,7 +14,7 @@ fun SaveFileDialog(
     onCloseRequest: (file: File?) -> Unit
 ) = AwtWindow(
     create = {
-        object : FileDialog(parent, "Save to", SAVE) {
+        object : FileDialog(parent, StringRes.get().save, SAVE) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
                 if (value) {
@@ -51,7 +52,7 @@ fun LoadFileDialog(
     onCloseRequest: (file: File?) -> Unit
 ) = AwtWindow(
     create = {
-        object : FileDialog(parent, "Load", LOAD) {
+        object : FileDialog(parent, StringRes.get().load, LOAD) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
                 if (value) {
@@ -69,6 +70,9 @@ fun LoadFileDialog(
             }
         }.apply {
             directory = System.getProperty("user.home")
+            setFilenameFilter { _, name ->
+                name.endsWith(".dxvk-cache", true)
+            }
         }
     },
     dispose = FileDialog::dispose
