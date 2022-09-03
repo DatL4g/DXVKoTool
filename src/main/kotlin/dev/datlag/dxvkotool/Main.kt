@@ -6,13 +6,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -31,11 +35,12 @@ import dev.datlag.dxvkotool.model.UpdateButtonInfo
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.compose.AsyncImage
-import dev.datlag.dxvkotool.ui.compose.FileDialog
+import dev.datlag.dxvkotool.ui.compose.LoadFileDialog
+import dev.datlag.dxvkotool.ui.compose.SaveFileDialog
 import dev.datlag.dxvkotool.ui.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import androidx.compose.material.SnackbarHostState
+import dev.datlag.dxvkotool.ui.theme.Shape
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
@@ -198,14 +203,27 @@ fun GameCard(game: Game) {
 @Preview
 fun GameCache(game: Game, cache: DxvkStateCache) {
     val coroutineScope = rememberCoroutineScope()
-    val isExportOpen = remember { mutableStateOf(false) }
+    var isExportOpen by remember { mutableStateOf(false) }
     val info by cache.info.collectAsState()
+    var isMenuOpen by remember { mutableStateOf(false) }
+    var isLoadLocalFileOpen by remember { mutableStateOf(false) }
 
-    if (isExportOpen.value) {
-        FileDialog(cache.file.name) { destFile ->
-            isExportOpen.value = false
+    if (isExportOpen) {
+        SaveFileDialog(cache.file.name) { destFile ->
+            isExportOpen = false
             if (destFile != null) {
                 cache.writeTo(destFile, false)
+            }
+        }
+    }
+
+    if (isLoadLocalFileOpen) {
+        LoadFileDialog { loadFile ->
+            isLoadLocalFileOpen = false
+            if (loadFile != null) {
+                coroutineScope.launch(Dispatchers.IO) {
+                    cache.info.emit(CacheInfo.Download(loadFile))
+                }
             }
         }
     }
@@ -299,23 +317,50 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 }
             }
 
+
+
             Button(onClick = {
-                isExportOpen.value = true
+                isExportOpen = true
             }, modifier = Modifier.fillMaxWidth()) {
                 Icon(Icons.Filled.FileUpload, StringRes.get().export, modifier = Modifier.size(ButtonDefaults.IconSize))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(StringRes.get().export)
             }
-            Button(onClick = {
-                if (updateInfo.isDownload) {
-                    cache.downloadCache(coroutineScope)
-                } else if (updateInfo.isMerge) {
-                    game.mergeCache(coroutineScope, cache)
+            Row(modifier = Modifier.fillMaxSize()) {
+                Button(onClick = {
+                    if (updateInfo.isDownload) {
+                        cache.downloadCache(coroutineScope)
+                    } else if (updateInfo.isMerge) {
+                        game.mergeCache(coroutineScope, cache)
+                    }
+                },
+                    modifier = Modifier.weight(2F),
+                    enabled = updateInfo.isDownload || updateInfo.isMerge,
+                    shape = Shape.LeftRoundedShape
+                ) {
+                    Icon(updateInfo.icon, updateInfo.text, modifier = Modifier.size(ButtonDefaults.IconSize))
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(text = updateInfo.text)
                 }
-            }, modifier = Modifier.fillMaxWidth(), enabled = updateInfo.isDownload || updateInfo.isMerge) {
-                Icon(updateInfo.icon, updateInfo.text, modifier = Modifier.size(ButtonDefaults.IconSize))
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(text = updateInfo.text)
+                DropdownMenu(
+                    expanded = isMenuOpen,
+                    onDismissRequest = { isMenuOpen = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+                ) {
+                    DropdownMenuItem(onClick = {
+                        isMenuOpen = false
+                        isLoadLocalFileOpen = true
+                    }, enabled = true) {
+                        Icon(Icons.Filled.InsertDriveFile, "Merge local file")
+                        Text("Merge local file")
+                    }
+                }
+                Spacer(modifier = Modifier.padding(2.dp))
+                Button(onClick = {
+                    isMenuOpen = true
+                }, shape = Shape.RightRoundedShape) {
+                    Icon(Icons.Filled.ExpandMore, "More", modifier = Modifier.size(ButtonDefaults.IconSize))
+                }
             }
             Button(onClick = {
 

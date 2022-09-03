@@ -7,7 +7,7 @@ import java.awt.Frame
 import java.io.File
 
 @Composable
-fun FileDialog(
+fun SaveFileDialog(
     fileName: String,
     parent: Frame? = null,
     onCloseRequest: (file: File?) -> Unit
@@ -40,6 +40,35 @@ fun FileDialog(
         }.apply {
             directory = System.getProperty("user.home")
             file = fileName
+        }
+    },
+    dispose = FileDialog::dispose
+)
+
+@Composable
+fun LoadFileDialog(
+    parent: Frame? = null,
+    onCloseRequest: (file: File?) -> Unit
+) = AwtWindow(
+    create = {
+        object : FileDialog(parent, "Load", LOAD) {
+            override fun setVisible(value: Boolean) {
+                super.setVisible(value)
+                if (value) {
+                    if (file != null && directory != null) {
+                        val loadFile = File(directory, file)
+                        if (loadFile.exists() && loadFile.canRead()) {
+                            onCloseRequest(loadFile)
+                        } else {
+                            onCloseRequest(null)
+                        }
+                    } else {
+                        onCloseRequest(null)
+                    }
+                }
+            }
+        }.apply {
+            directory = System.getProperty("user.home")
         }
     },
     dispose = FileDialog::dispose
