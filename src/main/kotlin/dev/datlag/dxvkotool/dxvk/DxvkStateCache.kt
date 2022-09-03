@@ -97,7 +97,8 @@ data class DxvkStateCache(
             val fileResult = downloadFromUrl(downloadUrl).getOrNull() ?: throw DownloadException.InvalidFile
             val cache = fromFile(fileResult).getOrNull()
             info.emit(if (cache != null) {
-                CacheInfo.Download.Cache(fileResult, cache)
+                val combinedCache = combine(cache).getOrThrow()
+                CacheInfo.Download.Cache(fileResult, cache, combinedCache)
             } else {
                 CacheInfo.Download.NoCache(fileResult)
             })
@@ -109,7 +110,8 @@ data class DxvkStateCache(
 
         val cache = fromFile(loadFile).getOrNull()
         info.emit(if (cache != null) {
-            CacheInfo.Download.Cache(loadFile, cache)
+            val combinedCache = combine(cache).getOrThrow()
+            CacheInfo.Download.Cache(loadFile, cache, combinedCache)
         } else {
             CacheInfo.Download.NoCache(loadFile)
         })

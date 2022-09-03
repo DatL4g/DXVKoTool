@@ -207,6 +207,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     val info by cache.info.collectAsState()
     var isMenuOpen by remember { mutableStateOf(false) }
     var isLoadLocalFileOpen by remember { mutableStateOf(false) }
+    var newEntrySize by mutableStateOf(-1)
 
     val updateInfo = when (info) {
         is CacheInfo.Loading.Url -> {
@@ -259,12 +260,23 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
             }
         }
         is CacheInfo.Download.Cache -> {
-            UpdateButtonInfo(
-                text = StringRes.get().merge,
-                icon = Icons.Filled.MergeType,
-                isDownload = false,
-                isMerge = true
-            )
+            val newCache = (info as CacheInfo.Download.Cache)
+            newEntrySize = newCache.combinedCache.entries.size - cache.entries.size
+            if (newEntrySize > 0) {
+                UpdateButtonInfo(
+                    text = StringRes.get().merge,
+                    icon = Icons.Filled.MergeType,
+                    isDownload = false,
+                    isMerge = true
+                )
+            } else {
+                UpdateButtonInfo(
+                    text = StringRes.get().upToDate,
+                    icon = Icons.Filled.Check,
+                    isDownload = false,
+                    isMerge = false
+                )
+            }
         }
         is CacheInfo.Download.NoCache -> {
             UpdateButtonInfo(

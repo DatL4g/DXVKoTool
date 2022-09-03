@@ -22,7 +22,8 @@ sealed class CacheInfo {
     sealed class Download private constructor(open val file: File) : CacheInfo() {
         data class Cache(
             override val file: File,
-            val cache: DxvkStateCache
+            val cache: DxvkStateCache,
+            val combinedCache: DxvkStateCache
         ) : Download(file)
 
         data class NoCache(override val file: File) : Download(file)

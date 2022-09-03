@@ -25,6 +25,7 @@ interface AppStringRes {
     val load: String
     val save: String
     val connectRepoItem: String
+    val upToDate: String
 }
 
 object StringRes {
@@ -55,6 +56,7 @@ object StringRes {
         override val load: String = "Load"
         override val save: String = "Save"
         override val connectRepoItem: String = "Connect repository item"
+        override val upToDate: String = "Up-to-date"
     }
 
     fun get() = en
