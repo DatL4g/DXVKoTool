@@ -33,6 +33,9 @@ import dev.datlag.dxvkotool.model.CacheInfo
 import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.model.UpdateButtonInfo
 import dev.datlag.dxvkotool.network.OnlineDXVK
+import dev.datlag.dxvkotool.other.DXVKException
+import dev.datlag.dxvkotool.other.DownloadException
+import dev.datlag.dxvkotool.other.ReadErrorType
 import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.compose.AsyncImage
 import dev.datlag.dxvkotool.ui.compose.LoadFileDialog
@@ -41,6 +44,7 @@ import dev.datlag.dxvkotool.ui.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import dev.datlag.dxvkotool.ui.theme.Shape
+import kotlinx.coroutines.CoroutineScope
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
@@ -61,8 +65,12 @@ fun App() {
                 },
                 scaffoldState = scaffoldState,
                 floatingActionButton = {
-                    FloatingActionButton(onClick = {
+                    val snackbarHost = LocalSnackbarHost.current
 
+                    FloatingActionButton(onClick = {
+                        coroutineScope.launch(Dispatchers.IO) {
+                            snackbarHost.showSnackbar("Adding your own games is not implemented yet")
+                        }
                     },
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary) {
@@ -84,7 +92,6 @@ fun App() {
 @Preview
 fun ToolBar() {
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHost = LocalSnackbarHost.current
 
     TopAppBar(
         title = {
@@ -109,9 +116,6 @@ fun ToolBar() {
             }
             IconButton(onClick = {
                 SteamIO.reload(coroutineScope)
-                coroutineScope.launch(Dispatchers.IO) {
-                    snackbarHost.showSnackbar("Reloading games")
-                }
             }) {
                 Icon(
                     Icons.Filled.Refresh,
@@ -208,6 +212,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     var isMenuOpen by remember { mutableStateOf(false) }
     var isLoadLocalFileOpen by remember { mutableStateOf(false) }
     var newEntrySize by mutableStateOf(-1)
+    val snackbarHost = LocalSnackbarHost.current
 
     val updateInfo = when (info) {
         is CacheInfo.Loading.Url -> {
@@ -300,7 +305,8 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
         SaveFileDialog(cache.file.name) { destFile ->
             isExportOpen = false
             if (destFile != null) {
-                cache.writeTo(destFile, false)
+                val exportResult = cache.writeTo(destFile, false)
+                snackbarHost.showFromResult(coroutineScope, exportResult, StringRes.get().exportSuccessful)
             }
         }
     }
@@ -345,9 +351,15 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Button(onClick = {
                     if (updateInfo.isDownload) {
-                        cache.downloadCache(coroutineScope)
+                        val downloadResult = cache.downloadCache(coroutineScope)
+                        downloadResult.onFailure {
+                            snackbarHost.showFromResult(coroutineScope, downloadResult, String())
+                        }
                     } else if (updateInfo.isMerge) {
-                        game.mergeCache(coroutineScope, cache)
+                        val mergeResult = game.mergeCache(coroutineScope, cache)
+                        mergeResult.onFailure {
+                            snackbarHost.showFromResult(coroutineScope, mergeResult, String())
+                        }
                     }
                 },
                     modifier = Modifier.weight(1F),
@@ -395,6 +407,33 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
             }
         }
     }
+}
+
+fun <T> SnackbarHostState.showFromResult(scope: CoroutineScope, result: Result<T>, success: String) = scope.launch(Dispatchers.IO) {
+    val message = if (result.isSuccess) {
+        success
+    } else when (val exception = result.exceptionOrNull()) {
+        is DXVKException.ReadError -> {
+            if (exception.type is ReadErrorType.MAGIC) {
+                StringRes.get().fileInvalidMagic
+            } else {
+                StringRes.get().fileReadBytesError
+            }
+        }
+        is DXVKException.InvalidEntry -> StringRes.get().fileInvalidEntry
+        is DXVKException.UnexpectedEndOfFile -> StringRes.get().fileUnexpectedEnd
+        is DXVKException.VersionMismatch -> StringRes.get().cacheVersionMismatchPlaceholder.format(exception.current.toInt(), exception.new.toInt())
+        is DownloadException.NoDownloadUrl -> StringRes.get().noDownloadUrlProvided
+        is DownloadException.InvalidFile -> StringRes.get().downloadFileInvalid
+        else -> {
+            val innerMessage = exception?.message ?: StringRes.get().unknown
+            innerMessage.ifEmpty {
+                StringRes.get().unknown
+            }
+        }
+    }
+
+    this@showFromResult.showSnackbar(message)
 }
 
 fun main() = application {

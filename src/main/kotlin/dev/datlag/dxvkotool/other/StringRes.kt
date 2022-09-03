@@ -26,6 +26,16 @@ interface AppStringRes {
     val save: String
     val connectRepoItem: String
     val upToDate: String
+
+    val fileInvalidMagic: String
+    val fileReadBytesError: String
+    val fileInvalidEntry: String
+    val fileUnexpectedEnd: String
+    val cacheVersionMismatchPlaceholder: String
+    val noDownloadUrlProvided: String
+    val downloadFileInvalid: String
+
+    val exportSuccessful: String
 }
 
 object StringRes {
@@ -57,6 +67,16 @@ object StringRes {
         override val save: String = "Save"
         override val connectRepoItem: String = "Connect repository item"
         override val upToDate: String = "Up-to-date"
+
+        override val fileInvalidMagic: String = "Magic is invalid, needs to be ${DXVK.MAGIC}"
+        override val fileReadBytesError: String = "Could not read bytes properly"
+        override val fileInvalidEntry: String = "Got invalid entry"
+        override val fileUnexpectedEnd: String = "Unexpected end of file"
+        override val cacheVersionMismatchPlaceholder: String = "Cache version mismatch, original: %d new: %d"
+        override val noDownloadUrlProvided: String = "No download url provided"
+        override val downloadFileInvalid: String = "Downloaded file is invalid, try downloading it yourself"
+
+        override val exportSuccessful: String = "Exported file successfully"
     }
 
     fun get() = en
