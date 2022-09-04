@@ -36,6 +36,7 @@ interface AppStringRes {
     val downloadFileInvalid: String
 
     val exportSuccessful: String
+    val openFolder: String
 }
 
 object StringRes {
@@ -77,6 +78,7 @@ object StringRes {
         override val downloadFileInvalid: String = "Downloaded file is invalid, try downloading it yourself"
 
         override val exportSuccessful: String = "Exported file successfully"
+        override val openFolder: String = "Open folder"
     }
 
     fun get() = en

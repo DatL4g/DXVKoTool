@@ -1,5 +1,6 @@
 package dev.datlag.dxvkotool.io
 
+import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.model.AppManifest
 import dev.datlag.dxvkotool.model.CacheInfo
@@ -53,7 +54,7 @@ object SteamIO {
         setOf(*t1.toTypedArray(), *t2.toTypedArray()).toList()
     }.flowOn(Dispatchers.IO)
 
-    val steamGamesFlow = combine(appManifestFlow, shaderCacheFoldersFlow) { t1, t2 ->
+    val steamGamesFlow = combine(appManifestFlow, shaderCacheFoldersFlow, DB.steamGames) { t1, t2, t3 ->
         val foldersWithManifest = t2.associateWith { file ->
             t1.firstOrNull {
                 it.appId.equals(file.name, true)
@@ -85,6 +86,12 @@ object SteamIO {
                     if (caches.isEmpty()) {
                         null
                     } else {
+                        caches.forEach { cache ->
+                            val dbItem = t3.firstOrNull { db ->
+                                db.appId == (it.key.appId.toLongOrNull() ?: 0) && db.cacheName.equals(cache.file.name, true)
+                            }
+                            cache.associatedRepoItem.emit(dbItem?.repoItem)
+                        }
                         Game.Steam(
                             it.key,
                             it.value,

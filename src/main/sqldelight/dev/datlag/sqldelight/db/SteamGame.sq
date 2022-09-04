@@ -1,0 +1,17 @@
+CREATE TABLE SteamGame(
+    appId INTEGER NOT NULL,
+    cacheName TEXT NOT NULL,
+    repoItem TEXT,
+    PRIMARY KEY (appId, cacheName)
+);
+
+selectAll:
+SELECT * FROM SteamGame;
+
+insert:
+INSERT INTO SteamGame(appId, cacheName, repoItem)
+VALUES (?, ?, ?);
+
+insertObject:
+INSERT INTO SteamGame(appId, cacheName, repoItem)
+VALUES ?;

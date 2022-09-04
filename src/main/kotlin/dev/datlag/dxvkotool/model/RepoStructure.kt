@@ -36,6 +36,14 @@ data class RepoStructure(
 
         return associated
     }
+
+    fun findMatchingCacheItem(cache: DxvkStateCache): StructureItem? = tree.firstNotNullOfOrNull {
+        if (it.path.equals(cache.associatedRepoItem.value, true)) {
+            it
+        } else {
+            null
+        }
+    }
 }
 
 @Serializable
@@ -89,6 +97,6 @@ data class StructureItemContent(
 
 fun Collection<RepoStructure>.findMatchingGameItem(game: Game): Map<DxvkStateCache, StructureItem?> {
     return game.caches.value.associateWith { cache ->
-        this.firstNotNullOfOrNull { it.findMatchingGameItem(game)[cache] }
+        this.firstNotNullOfOrNull { it.findMatchingCacheItem(cache) } ?: this.firstNotNullOfOrNull { it.findMatchingGameItem(game)[cache] }
     }
 }

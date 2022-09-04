@@ -45,6 +45,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import dev.datlag.dxvkotool.ui.theme.Shape
 import kotlinx.coroutines.CoroutineScope
+import java.awt.Desktop
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
@@ -390,6 +391,17 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                         Spacer(modifier = Modifier.padding(4.dp))
                         Text(StringRes.get().connectRepoItem)
                     }
+                    DropdownMenuItem(onClick = {
+                        isMenuOpen = false
+                        val openFolderResult = runCatching {
+                            Desktop.getDesktop().open(cache.file.parentFile)
+                        }
+                        snackbarHost.showFromResult(coroutineScope, openFolderResult, String())
+                    }, enabled = true) {
+                        Icon(Icons.Filled.Folder, StringRes.get().openFolder)
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text(StringRes.get().openFolder)
+                    }
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
                 Button(onClick = {
@@ -433,7 +445,9 @@ fun <T> SnackbarHostState.showFromResult(scope: CoroutineScope, result: Result<T
         }
     }
 
-    this@showFromResult.showSnackbar(message)
+    if (message.isNotEmpty()) {
+        this@showFromResult.showSnackbar(message)
+    }
 }
 
 fun main() = application {

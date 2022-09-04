@@ -22,6 +22,8 @@ data class DxvkStateCache(
 
     val info: MutableStateFlow<CacheInfo> = MutableStateFlow(CacheInfo.Loading.Url)
 
+    val associatedRepoItem: MutableStateFlow<String?> = MutableStateFlow(null)
+
     fun writeTo(file: File, backup: Boolean) = runCatching {
         var backupFile = file
         var createdBackup = false

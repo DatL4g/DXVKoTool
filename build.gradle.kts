@@ -7,6 +7,7 @@ plugins {
     kotlin("plugin.serialization") version "1.7.10"
     id("com.google.devtools.ksp") version "1.7.10-1.0.6"
     id("com.github.ben-manes.versions") version "0.42.0"
+    id("com.squareup.sqldelight") version "1.5.3"
 }
 
 val appVersion = "0.1.0"
@@ -37,6 +38,9 @@ dependencies {
 
     implementation("org.tukaani:xz:1.9")
     implementation("org.rauschig:jarchivelib:1.2.0")
+
+    implementation("com.squareup.sqldelight:sqlite-driver:1.5.3")
+    implementation("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")
 }
 
 configurations.all {
@@ -63,5 +67,11 @@ compose.desktop {
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
         }
+    }
+}
+
+sqldelight {
+    database("DXVKoToolDB") {
+        packageName = "dev.datlag"
     }
 }
