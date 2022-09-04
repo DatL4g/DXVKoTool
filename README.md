@@ -45,7 +45,7 @@ To add functionality fork the project and create a pull request afterwards. You 
 
 | Avatar | Contributor |
 |---|:---:|
-| [![](https://avatars3.githubusercontent.com/u/46448715?s=50&v=4)](http://github.com/DatL4g) | [DatLag](http://github.com/DatL4g) |
+| [![](https://avatars3.githubusercontent.com/u/46448715?s=50&v=4)](https://github.com/DatL4g) | [DatLag](https://github.com/DatL4g) |
 
 ## Support the project
 
