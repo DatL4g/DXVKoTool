@@ -64,7 +64,8 @@ fun InfoDialog(isDialogOpen: MutableState<Boolean>) {
                             textDecoration = TextDecoration.Underline,
                             color = Color.Blue,
                             modifier = Modifier.onClick {
-                                Constants.githubProjectLink.openInBrowser()
+                                val openProjectResult = Constants.githubProjectLink.openInBrowser()
+                                snackbarHost.showFromResult(coroutineScope, openProjectResult, String())
                             }
                         )
                     }
@@ -73,9 +74,7 @@ fun InfoDialog(isDialogOpen: MutableState<Boolean>) {
             dismissButton = {
                 Button(onClick = {
                     isDialogOpen.value = false
-                    val openDonateResult = runCatching {
-                        Constants.githubSponsorLink.openInBrowser()
-                    }
+                    val openDonateResult = Constants.githubSponsorLink.openInBrowser()
                     snackbarHost.showFromResult(coroutineScope, openDonateResult, String())
                 }) {
                     Text(StringRes.get().donate)
