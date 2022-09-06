@@ -66,6 +66,8 @@ compose.desktop {
             description = "The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches"
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
+
+            modules("java.instrument", "java.management", "java.sql", "jdk.unsupported")
         }
     }
 }
