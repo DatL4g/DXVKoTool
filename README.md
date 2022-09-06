@@ -22,13 +22,13 @@ Additionally it's my first time working with compose 😬.
     - only mergable if more entries available
 - Update entry size text after merge
 - WIP: Show more information in Snackbar on actions
+- WIP: Information dialog
   
 **Planned functionality:**
 
 - Add other games on your own
   - not Steam games only
 - Don't show ```None found``` during first availability check
-- Add information dialog
 - Package a single AppImage
   - not the whole directory
   - HELP WANTED
