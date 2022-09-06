@@ -2,6 +2,9 @@ package dev.datlag.dxvkotool.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.AwtWindow
+import dev.datlag.dxvkotool.common.canReadSafely
+import dev.datlag.dxvkotool.common.canWriteSafely
+import dev.datlag.dxvkotool.common.existsSafely
 import dev.datlag.dxvkotool.other.StringRes
 import java.awt.FileDialog
 import java.awt.Frame
@@ -20,14 +23,14 @@ fun SaveFileDialog(
                 if (value) {
                     if (directory != null && file != null) {
                         val destFile = File(directory, file)
-                        if (destFile.exists()) {
-                            if (destFile.canRead() && destFile.canWrite()) {
+                        if (destFile.existsSafely()) {
+                            if (destFile.canReadSafely() && destFile.canWriteSafely()) {
                                 onCloseRequest(destFile)
                             } else {
                                 onCloseRequest(null)
                             }
                         } else {
-                            if (destFile.parentFile.canWrite()) {
+                            if (destFile.parentFile.canWriteSafely()) {
                                 onCloseRequest(destFile)
                             } else {
                                 onCloseRequest(null)
@@ -58,7 +61,7 @@ fun LoadFileDialog(
                 if (value) {
                     if (file != null && directory != null) {
                         val loadFile = File(directory, file)
-                        if (loadFile.exists() && loadFile.canRead()) {
+                        if (loadFile.existsSafely() && loadFile.canReadSafely()) {
                             onCloseRequest(loadFile)
                         } else {
                             onCloseRequest(null)

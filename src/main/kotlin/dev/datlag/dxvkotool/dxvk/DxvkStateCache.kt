@@ -1,5 +1,6 @@
 package dev.datlag.dxvkotool.dxvk
 
+import dev.datlag.dxvkotool.common.existsSafely
 import dev.datlag.dxvkotool.common.openWriteChannel
 import dev.datlag.dxvkotool.common.readU32
 import dev.datlag.dxvkotool.common.writeU32
@@ -27,12 +28,12 @@ data class DxvkStateCache(
     suspend fun writeTo(file: File, backup: Boolean) = runCatching {
         var backupFile = file
         var createdBackup = false
-        if (!file.exists()) {
+        if (!file.existsSafely()) {
             file.createNewFile()
         } else {
             while(true) {
                 backupFile = File(backupFile.parentFile, "${backupFile.name}.bak")
-                if (backupFile.exists()) {
+                if (backupFile.existsSafely()) {
                     continue
                 } else {
                     break
