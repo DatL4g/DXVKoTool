@@ -20,6 +20,8 @@ import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.model.UpdateButtonInfo
 import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.theme.Shape
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.Desktop
 
 @Composable
@@ -124,8 +126,10 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
         SaveFileDialog(cache.file.name) { destFile ->
             isExportOpen = false
             if (destFile != null) {
-                val exportResult = cache.writeTo(destFile, false)
-                snackbarHost.showFromResult(coroutineScope, exportResult, StringRes.get().exportSuccessful)
+                coroutineScope.launch(Dispatchers.IO) {
+                    val exportResult = cache.writeTo(destFile, false)
+                    snackbarHost.showFromResult(exportResult, StringRes.get().exportSuccessful)
+                }
             }
         }
     }
