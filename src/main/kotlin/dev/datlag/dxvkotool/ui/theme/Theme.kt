@@ -42,8 +42,16 @@ fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
+    // unable to detect Adwaita dark/light theme
+    val isDark = true
+
     MaterialTheme(
-        colorScheme = DarkColors,
-        content = content
-    )
+        colorScheme = DarkColors
+    ) {
+        androidx.compose.material.MaterialTheme(
+            colors = MaterialTheme.colorScheme.toLegacyColors(isDark),
+            shapes = MaterialTheme.shapes.toLegacyShapes(),
+            content = content
+        )
+    }
 }

@@ -21,6 +21,7 @@ import dev.datlag.dxvkotool.other.StringRes
 @Preview
 fun ToolBar() {
     val coroutineScope = rememberCoroutineScope()
+    val isDialogOpen = remember { mutableStateOf(false) }
 
     TopAppBar(
         title = {
@@ -33,9 +34,9 @@ fun ToolBar() {
         backgroundColor = MaterialTheme.colorScheme.tertiary,
         contentColor = MaterialTheme.colorScheme.onTertiary,
         actions = {
-            val openDialog = remember { mutableStateOf(false)  }
+            InfoDialog(isDialogOpen)
             IconButton(onClick = {
-                openDialog.value = true
+                isDialogOpen.value = true
             }) {
                 Icon(
                     Icons.Filled.Info,

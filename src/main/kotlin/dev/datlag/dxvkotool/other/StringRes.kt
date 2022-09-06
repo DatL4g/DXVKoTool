@@ -37,6 +37,9 @@ interface AppStringRes {
 
     val exportSuccessful: String
     val openFolder: String
+    val close: String
+    val donate: String
+    val fullAppDescription: String
 }
 
 object StringRes {
@@ -79,6 +82,9 @@ object StringRes {
 
         override val exportSuccessful: String = "Exported file successfully"
         override val openFolder: String = "Open folder"
+        override val close: String = "Close"
+        override val donate: String = "Donate"
+        override val fullAppDescription: String = "The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches."
     }
 
     fun get() = en

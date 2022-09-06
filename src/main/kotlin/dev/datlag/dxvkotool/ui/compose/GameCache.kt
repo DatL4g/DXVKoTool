@@ -195,8 +195,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 }
                 DropdownMenu(
                     expanded = isMenuOpen,
-                    onDismissRequest = { isMenuOpen = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+                    onDismissRequest = { isMenuOpen = false }
                 ) {
                     DropdownMenuItem(onClick = {
                         isMenuOpen = false

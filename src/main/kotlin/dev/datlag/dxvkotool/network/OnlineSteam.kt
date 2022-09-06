@@ -10,8 +10,8 @@ import javax.imageio.ImageIO
 object OnlineSteam {
 
     private val steamHeaderCDN = listOf(
-        "https://cdn4.steampowered.com/v/gfx/apps/{appid}/header.jpg",
-        "https://cdn.akamai.steamstatic.com/steam/apps/{appid}/header.jpg"
+        "https://cdn.akamai.steamstatic.com/steam/apps/{appid}/header.jpg",
+        "https://cdn4.steampowered.com/v/gfx/apps/{appid}/header.jpg"
     )
 
     suspend fun getBitmapFromAppId(appId: String) = withContext(Dispatchers.IO) {
