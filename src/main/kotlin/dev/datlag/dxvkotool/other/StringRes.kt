@@ -40,6 +40,9 @@ interface AppStringRes {
     val close: String
     val donate: String
     val fullAppDescription: String
+    val unsupportedSystem: String
+
+    val githubPlaceholder: String
 }
 
 object StringRes {
@@ -47,7 +50,7 @@ object StringRes {
         override val name: String = "DXVKoTool"
         override val info: String = "Info"
         override val reload: String = "Reload"
-        override val versionPlaceholder: String = "Version: %d"
+        override val versionPlaceholder: String = "Version: %s"
         override val entriesPlaceholder: String = "Entries: %d"
         override val export: String = "Export"
         override val merge: String = "Merge"
@@ -85,6 +88,9 @@ object StringRes {
         override val close: String = "Close"
         override val donate: String = "Donate"
         override val fullAppDescription: String = "The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches."
+        override val unsupportedSystem: String = "Unsupported system"
+
+        override val githubPlaceholder: String = "GitHub: %s"
     }
 
     fun get() = en

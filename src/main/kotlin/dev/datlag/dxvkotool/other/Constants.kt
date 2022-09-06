@@ -22,6 +22,9 @@ object Constants {
 
     const val githubApiBaseUrl = "https://api.github.com/"
 
+    const val githubProjectLink = "https://github.com/DATL4G/DXVKoTool"
+    const val githubSponsorLink = "https://github.com/sponsors/DATL4G"
+
     val json = Json {
         isLenient = true
         prettyPrint = true

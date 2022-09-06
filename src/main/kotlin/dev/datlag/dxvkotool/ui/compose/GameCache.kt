@@ -1,10 +1,7 @@
 package dev.datlag.dxvkotool.ui.compose
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -22,7 +19,6 @@ import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.theme.Shape
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.awt.Desktop
 
 @Composable
 @Preview
@@ -30,8 +26,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     val coroutineScope = rememberCoroutineScope()
     var isExportOpen by remember { mutableStateOf(false) }
     val info by cache.info.collectAsState()
-    var isMenuOpen by remember { mutableStateOf(false) }
-    var isLoadLocalFileOpen by remember { mutableStateOf(false) }
+    val isMenuOpen = remember { mutableStateOf(false) }
     var newEntrySize by mutableStateOf(-1)
     val snackbarHost = LocalSnackbarHost.current
 
@@ -134,15 +129,6 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
         }
     }
 
-    if (isLoadLocalFileOpen) {
-        LoadFileDialog { loadFile ->
-            isLoadLocalFileOpen = false
-            if (loadFile != null) {
-                cache.loadLocalFile(coroutineScope, loadFile)
-            }
-        }
-    }
-
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Column(modifier = Modifier.fillMaxWidth(0.5F).fillMaxHeight()) {
             Text(
@@ -153,7 +139,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 modifier = Modifier.padding(0.dp, 8.dp)
             )
             Text(
-                text = StringRes.get().versionPlaceholder.format(cache.header.version.toInt()),
+                text = StringRes.get().versionPlaceholder.format(cache.header.version.toString()),
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 1
             )
@@ -193,40 +179,10 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(text = updateInfo.text)
                 }
-                DropdownMenu(
-                    expanded = isMenuOpen,
-                    onDismissRequest = { isMenuOpen = false }
-                ) {
-                    DropdownMenuItem(onClick = {
-                        isMenuOpen = false
-                        isLoadLocalFileOpen = true
-                    }, enabled = true) {
-                        Icon(Icons.Filled.InsertDriveFile, StringRes.get().mergeLocalFile)
-                        Spacer(modifier = Modifier.padding(4.dp))
-                        Text(StringRes.get().mergeLocalFile)
-                    }
-                    DropdownMenuItem(onClick = {
-                        isMenuOpen = false
-                    }, enabled = false) {
-                        Icon(Icons.Filled.Link, StringRes.get().connectRepoItem)
-                        Spacer(modifier = Modifier.padding(4.dp))
-                        Text(StringRes.get().connectRepoItem)
-                    }
-                    DropdownMenuItem(onClick = {
-                        isMenuOpen = false
-                        val openFolderResult = runCatching {
-                            Desktop.getDesktop().open(cache.file.parentFile)
-                        }
-                        snackbarHost.showFromResult(coroutineScope, openFolderResult, String())
-                    }, enabled = true) {
-                        Icon(Icons.Filled.Folder, StringRes.get().openFolder)
-                        Spacer(modifier = Modifier.padding(4.dp))
-                        Text(StringRes.get().openFolder)
-                    }
-                }
+                CacheDropdownMenu(cache, isMenuOpen)
                 Spacer(modifier = Modifier.padding(2.dp))
                 Button(onClick = {
-                    isMenuOpen = true
+                    isMenuOpen.value = true
                 }, shape = Shape.RightRoundedShape) {
                     Icon(Icons.Filled.ExpandMore, StringRes.get().more, modifier = Modifier.size(ButtonDefaults.IconSize))
                 }
