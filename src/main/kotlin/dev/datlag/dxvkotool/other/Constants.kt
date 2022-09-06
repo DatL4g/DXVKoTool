@@ -25,6 +25,8 @@ object Constants {
     const val githubProjectLink = "https://github.com/DATL4G/DXVKoTool"
     const val githubSponsorLink = "https://github.com/sponsors/DATL4G"
 
+    const val GNOME = "GNOME"
+
     val json = Json {
         isLenient = true
         prettyPrint = true

@@ -118,7 +118,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     }
 
     if (isExportOpen) {
-        SaveFileDialog(cache.file.name) { destFile ->
+        CombinedSaveFileDialog(cache.file.name) { destFile ->
             isExportOpen = false
             if (destFile != null) {
                 coroutineScope.launch(Dispatchers.IO) {

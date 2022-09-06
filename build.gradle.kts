@@ -41,6 +41,8 @@ dependencies {
 
     implementation("com.squareup.sqldelight:sqlite-driver:1.5.3")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")
+
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
 }
 
 configurations.all {
