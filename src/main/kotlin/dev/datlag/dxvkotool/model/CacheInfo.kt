@@ -30,4 +30,8 @@ sealed class CacheInfo {
     }
 
     data class Merged(val success: Boolean) : CacheInfo()
+
+    sealed class Error : CacheInfo() {
+        object Download : Error()
+    }
 }

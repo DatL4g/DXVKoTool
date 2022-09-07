@@ -39,6 +39,7 @@ dependencies {
 
     implementation("org.tukaani:xz:1.9")
     implementation("org.rauschig:jarchivelib:1.2.0")
+    implementation("org.apache.tika:tika-core:2.4.1")
 
     implementation("com.squareup.sqldelight:sqlite-driver:1.5.3")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")

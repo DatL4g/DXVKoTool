@@ -8,6 +8,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.apache.tika.Tika
 
 object Constants {
     const val STEAM_DEFAULT_ROOT = "/.steam/steam/steamapps/"
@@ -26,6 +27,7 @@ object Constants {
     const val githubSponsorLink = "https://github.com/sponsors/DATL4G"
 
     const val GNOME = "GNOME"
+    val tikaCore = Tika()
 
     val json = Json {
         isLenient = true

@@ -115,6 +115,14 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 isMerge = false
             )
         }
+        is CacheInfo.Error -> {
+            UpdateButtonInfo(
+                text = StringRes.get().error,
+                icon = Icons.Filled.Clear,
+                isDownload = false,
+                isMerge = false
+            )
+        }
     }
 
     if (isExportOpen) {
