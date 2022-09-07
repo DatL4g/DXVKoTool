@@ -24,7 +24,7 @@ object FileExtractor {
         tmpFolder
     }
 
-    suspend fun downloadToTempFile(name: String, url: String) = runSuspendCatching {
+    suspend fun downloadToTempFile(name: String, url: String): Result<File> = runSuspendCatching {
         val downloadFile = createTempFile(name).getOrThrow()
         Constants.httpClient.download(url, downloadFile, 1024 * 1000)
 

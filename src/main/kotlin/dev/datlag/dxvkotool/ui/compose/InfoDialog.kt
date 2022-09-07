@@ -3,10 +3,7 @@ package dev.datlag.dxvkotool.ui.compose
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.onClick
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -72,19 +69,25 @@ fun InfoDialog(isDialogOpen: MutableState<Boolean>) {
                 }
             },
             dismissButton = {
-                Button(onClick = {
+                TextButton(onClick = {
                     isDialogOpen.value = false
                     val openDonateResult = Constants.githubSponsorLink.openInBrowser()
                     snackbarHost.showFromResult(coroutineScope, openDonateResult, String())
                 }) {
-                    Text(StringRes.get().donate)
+                    Text(
+                        text = StringRes.get().donate,
+                        color = MaterialTheme.colors.error
+                    )
                 }
             },
             confirmButton = {
-                Button(onClick = {
+                TextButton(onClick = {
                     isDialogOpen.value = false
                 }) {
-                    Text(StringRes.get().close)
+                    Text(
+                        text = StringRes.get().close,
+                        color = MaterialTheme.colors.onBackground
+                    )
                 }
             }
         )

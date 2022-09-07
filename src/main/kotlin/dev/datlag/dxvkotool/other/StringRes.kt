@@ -43,6 +43,7 @@ interface AppStringRes {
     val unsupportedSystem: String
 
     val githubPlaceholder: String
+    val cacheInformation: String
 }
 
 object StringRes {
@@ -91,6 +92,7 @@ object StringRes {
         override val unsupportedSystem: String = "Unsupported system"
 
         override val githubPlaceholder: String = "GitHub: %s"
+        override val cacheInformation: String = "Cache Information"
     }
 
     fun get() = en

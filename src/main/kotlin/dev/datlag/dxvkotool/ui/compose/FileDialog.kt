@@ -53,7 +53,10 @@ fun SaveFileDialog(
             file = fileName
         }
     },
-    dispose = FileDialog::dispose
+    dispose = FileDialog::dispose,
+    update = {
+        it.toFront()
+    }
 )
 
 @Composable
@@ -85,7 +88,10 @@ fun LoadFileDialog(
             }
         }
     },
-    dispose = FileDialog::dispose
+    dispose = FileDialog::dispose,
+    update = {
+        it.toFront()
+    }
 )
 
 @Composable
