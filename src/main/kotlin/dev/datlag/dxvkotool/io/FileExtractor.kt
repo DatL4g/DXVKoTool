@@ -44,7 +44,7 @@ object FileExtractor {
         cache.info.emit(CacheInfo.Processing.FindMatchingFile)
         return@runSuspendCatching destination.walkTopDown().firstOrNull {
             it.extension.equals("dxvk-cache", true) && it.nameWithoutExtension.equals(name, true)
-        } ?: destination.walkTopDown().firstOrNull() ?: throw IllegalStateException()
+        } ?: destination.walkTopDown().singleOrNull() ?: throw IllegalStateException()
     }
 
 }
