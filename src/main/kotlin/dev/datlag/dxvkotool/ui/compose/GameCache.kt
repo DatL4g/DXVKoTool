@@ -28,7 +28,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     val info by cache.info.collectAsState()
     val isMenuOpen = remember { mutableStateOf(false) }
     val snackbarHost = LocalSnackbarHost.current
-    val updateInfo = info.toButtonInfo()
+    val updateInfo = info.toButtonInfo(cache)
 
     if (isExportOpen) {
         CombinedSaveFileDialog(cache.file.name) { destFile ->

@@ -49,7 +49,7 @@ sealed class CacheInfo {
         object Download : Error()
     }
 
-    fun toButtonInfo(): UpdateButtonInfo {
+    fun toButtonInfo(gameCache: DxvkStateCache): UpdateButtonInfo {
         return when (this) {
             is Loading.Url -> {
                 UpdateButtonInfo(
@@ -101,7 +101,7 @@ sealed class CacheInfo {
                 }
             }
             is Download.Cache -> {
-                val newEntrySize = this.combinedCache.entries.size - cache.entries.size
+                val newEntrySize = this.combinedCache.entries.size - gameCache.entries.size
                 if (newEntrySize > 0) {
                     UpdateButtonInfo(
                         text = StringRes.get().merge,
