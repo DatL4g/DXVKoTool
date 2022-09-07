@@ -42,13 +42,9 @@ object FileExtractor {
         archiver.extract(downloadFile, destination)
 
         cache.info.emit(CacheInfo.Processing.FindMatchingFile)
-        return@runSuspendCatching if (destination.extension.equals("dxvk-cache", true)) {
-            destination
-        } else {
-            destination.walkTopDown().firstOrNull {
-                it.extension.equals("dxvk-cache", true) && it.nameWithoutExtension.equals(name, true)
-            } ?: throw IllegalStateException()
-        }
+        return@runSuspendCatching destination.walkTopDown().firstOrNull {
+            it.extension.equals("dxvk-cache", true) && it.nameWithoutExtension.equals(name, true)
+        } ?: destination.walkTopDown().firstOrNull() ?: throw IllegalStateException()
     }
 
 }
