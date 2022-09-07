@@ -27,103 +27,8 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     var isExportOpen by remember { mutableStateOf(false) }
     val info by cache.info.collectAsState()
     val isMenuOpen = remember { mutableStateOf(false) }
-    var newEntrySize by mutableStateOf(-1)
     val snackbarHost = LocalSnackbarHost.current
-
-    val updateInfo = when (info) {
-        is CacheInfo.Loading.Url -> {
-            UpdateButtonInfo(
-                text = StringRes.get().loading,
-                icon = Icons.Filled.HourglassBottom,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-        is CacheInfo.Loading.Download -> {
-            UpdateButtonInfo(
-                text = StringRes.get().downloading,
-                icon = Icons.Filled.HourglassBottom,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-        is CacheInfo.Loading.Local -> {
-            UpdateButtonInfo(
-                text = StringRes.get().loading,
-                icon = Icons.Filled.HourglassBottom,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-        is CacheInfo.None -> {
-            UpdateButtonInfo(
-                text = StringRes.get().noneFound,
-                icon = Icons.Filled.Clear,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-        is CacheInfo.Url -> {
-            if ((info as CacheInfo.Url).downloadUrl.isNullOrEmpty()) {
-                UpdateButtonInfo(
-                    text = StringRes.get().unavailable,
-                    icon = Icons.Filled.Clear,
-                    isDownload = false,
-                    isMerge = false
-                )
-            } else {
-                UpdateButtonInfo(
-                    text = StringRes.get().download,
-                    icon = Icons.Filled.FileDownload,
-                    isDownload = true,
-                    isMerge = false
-                )
-            }
-        }
-        is CacheInfo.Download.Cache -> {
-            val newCache = (info as CacheInfo.Download.Cache)
-            newEntrySize = newCache.combinedCache.entries.size - cache.entries.size
-            if (newEntrySize > 0) {
-                UpdateButtonInfo(
-                    text = StringRes.get().merge,
-                    icon = Icons.Filled.MergeType,
-                    isDownload = false,
-                    isMerge = true
-                )
-            } else {
-                UpdateButtonInfo(
-                    text = StringRes.get().upToDate,
-                    icon = Icons.Filled.Check,
-                    isDownload = false,
-                    isMerge = false
-                )
-            }
-        }
-        is CacheInfo.Download.NoCache -> {
-            UpdateButtonInfo(
-                text = StringRes.get().unknown,
-                icon = Icons.Filled.QuestionAnswer,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-        is CacheInfo.Merged -> {
-            UpdateButtonInfo(
-                text = if ((info as CacheInfo.Merged).success) StringRes.get().merged else StringRes.get().error,
-                icon = if ((info as CacheInfo.Merged).success) Icons.Filled.Check else Icons.Filled.Clear,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-        is CacheInfo.Error -> {
-            UpdateButtonInfo(
-                text = StringRes.get().error,
-                icon = Icons.Filled.Clear,
-                isDownload = false,
-                isMerge = false
-            )
-        }
-    }
+    val updateInfo = info.toButtonInfo()
 
     if (isExportOpen) {
         CombinedSaveFileDialog(cache.file.name) { destFile ->
@@ -185,7 +90,10 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 ) {
                     Icon(updateInfo.icon, updateInfo.text, modifier = Modifier.size(ButtonDefaults.IconSize))
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(text = updateInfo.text)
+                    Text(
+                        text = updateInfo.text,
+                        maxLines = 1
+                    )
                 }
                 CacheDropdownMenu(cache, isMenuOpen)
                 Spacer(modifier = Modifier.padding(2.dp))

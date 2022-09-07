@@ -83,7 +83,7 @@ data class DxvkStateCache(
     }
 
     suspend fun downloadFromUrl(url: String) = runSuspendCatching {
-        FileExtractor.downloadToTempFile(file.nameWithoutExtension, url).getOrThrow()
+        FileExtractor.downloadToTempFile(this, url).getOrThrow()
     }
 
     suspend fun downloadCache() = runSuspendCatching {
@@ -97,6 +97,8 @@ data class DxvkStateCache(
             info.emit(CacheInfo.Error.Download)
             throw DownloadException.InvalidFile
         }
+
+        info.emit(CacheInfo.Processing.CreatingCache)
         val cache = fromFile(fileResult).getOrNull()
         info.emit(if (cache != null) {
             val combinedCache = combine(cache).getOrThrow()

@@ -44,6 +44,11 @@ interface AppStringRes {
 
     val githubPlaceholder: String
     val cacheInformation: String
+
+    val detecting: String
+    val extracting: String
+    val matching: String
+    val creating: String
 }
 
 object StringRes {
@@ -93,6 +98,11 @@ object StringRes {
 
         override val githubPlaceholder: String = "GitHub: %s"
         override val cacheInformation: String = "Cache Information"
+
+        override val detecting: String = "Detecting"
+        override val extracting: String = "Extracting"
+        override val matching: String = "Matching"
+        override val creating: String = "Creating"
     }
 
     fun get() = en

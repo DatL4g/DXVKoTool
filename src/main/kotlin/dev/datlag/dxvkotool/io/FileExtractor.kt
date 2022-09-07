@@ -2,6 +2,8 @@ package dev.datlag.dxvkotool.io
 
 import dev.datlag.dxvkotool.common.download
 import dev.datlag.dxvkotool.common.runSuspendCatching
+import dev.datlag.dxvkotool.dxvk.DxvkStateCache
+import dev.datlag.dxvkotool.model.CacheInfo
 import dev.datlag.dxvkotool.other.Constants
 import org.rauschig.jarchivelib.ArchiveFormat
 import org.rauschig.jarchivelib.ArchiverFactory
@@ -24,18 +26,22 @@ object FileExtractor {
         tmpFolder
     }
 
-    suspend fun downloadToTempFile(name: String, url: String): Result<File> = runSuspendCatching {
+    suspend fun downloadToTempFile(cache: DxvkStateCache, url: String): Result<File> = runSuspendCatching {
+        val name = cache.file.nameWithoutExtension
         val downloadFile = createTempFile(name).getOrThrow()
         Constants.httpClient.download(url, downloadFile, 1024 * 1000)
 
+        cache.info.emit(CacheInfo.Processing.DetectingFileType)
         if (Constants.tikaCore.detect(downloadFile).equals("application/octet-stream", true)) {
             return@runSuspendCatching downloadFile
         }
 
         val destination = createTempFolder(name).getOrThrow()
+        cache.info.emit(CacheInfo.Processing.ExtractingArchive)
         val archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.XZ)
         archiver.extract(downloadFile, destination)
 
+        cache.info.emit(CacheInfo.Processing.FindMatchingFile)
         return@runSuspendCatching if (destination.extension.equals("dxvk-cache", true)) {
             destination
         } else {
