@@ -29,7 +29,7 @@ object FileExtractor {
     suspend fun downloadToTempFile(cache: DxvkStateCache, url: String): Result<File> = runSuspendCatching {
         val name = cache.file.nameWithoutExtension
         val downloadFile = createTempFile(name).getOrThrow()
-        Constants.httpClient.download(url, downloadFile, 1024 * 1000)
+        Constants.httpClient.download(url, downloadFile, 1024 * 1000).getOrThrow()
 
         cache.info.emit(CacheInfo.Processing.DetectingFileType)
         if (Constants.tikaCore.detect(downloadFile).equals("application/octet-stream", true)) {
