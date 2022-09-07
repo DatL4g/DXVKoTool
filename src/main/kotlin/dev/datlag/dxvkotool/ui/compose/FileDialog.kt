@@ -167,10 +167,8 @@ fun CombinedSaveFileDialog(
         System.getenv("XDG_CURRENT_DESKTOP")
     }.getOrNull() ?: String()
     if (desktop.equals(Constants.GNOME, true)) {
-        println("Using GNOME file chooser")
         SaveFileDialog(fileName, null, onCloseRequest)
     } else {
-        println("Using JFileChooser")
         SaveJFileDialog(fileName, onCloseRequest)
     }
 }
@@ -183,10 +181,8 @@ fun CombinedLoadFileDialog(
         System.getenv("XDG_CURRENT_DESKTOP")
     }.getOrNull() ?: String()
     if (desktop.equals(Constants.GNOME, true)) {
-        println("Using GNOME file chooser")
         LoadFileDialog(null, onCloseRequest)
     } else {
-        println("Using JFileChooser")
         LoadJFileDialog(onCloseRequest)
     }
 }

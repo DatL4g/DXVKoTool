@@ -1,5 +1,6 @@
 package dev.datlag.dxvkotool.model
 
+import dev.datlag.dxvkotool.common.runSuspendCatching
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.Constants
@@ -34,22 +35,20 @@ sealed class Game(
         }
     }
 
-    fun mergeCache(scope: CoroutineScope, cache: DxvkStateCache) = runCatching {
+    suspend fun mergeCache(cache: DxvkStateCache) = runSuspendCatching {
         val downloadCache = (cache.info.value as? CacheInfo.Download.Cache?) ?: throw MergeException.NoFileFound
 
-        scope.launch(Dispatchers.IO) {
-            val combinedCache = downloadCache.combinedCache
-            val combineResult = combinedCache.writeTo(combinedCache.file, true).isSuccess
-            val currentCaches = caches.value.toMutableList()
-            val cacheIndex = currentCaches.indexOf(cache)
-            combinedCache.info.emit(CacheInfo.Merged(combineResult))
+        val combinedCache = downloadCache.combinedCache
+        val combineResult = combinedCache.writeTo(combinedCache.file, true).isSuccess
+        val currentCaches = caches.value.toMutableList()
+        val cacheIndex = currentCaches.indexOf(cache)
+        combinedCache.info.emit(CacheInfo.Merged(combineResult))
 
-            if (cacheIndex >= 0) {
-                currentCaches[cacheIndex] = combinedCache
-            }
-
-            caches.emit(currentCaches)
+        if (cacheIndex >= 0) {
+            currentCaches[cacheIndex] = combinedCache
         }
+
+        caches.emit(currentCaches)
     }
 
     data class Steam(

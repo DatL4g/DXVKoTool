@@ -29,6 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.jetbrains.compose.material3:material3:1.2.0-alpha01-dev770")
     implementation("org.jetbrains.compose.material:material-icons-extended:1.2.0-alpha01-dev620")
+    implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.2")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -69,7 +70,7 @@ compose.desktop {
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
 
-            modules("java.instrument", "java.management", "java.sql", "jdk.unsupported")
+            modules("java.instrument", "java.management", "java.sql", "jdk.unsupported", "io.github.vincenzopalazzo.materialuiswing")
         }
     }
 }

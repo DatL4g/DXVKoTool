@@ -160,14 +160,14 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Button(onClick = {
                     if (updateInfo.isDownload) {
-                        val downloadResult = cache.downloadCache(coroutineScope)
-                        downloadResult.onFailure {
-                            snackbarHost.showFromResult(coroutineScope, downloadResult, String())
+                        coroutineScope.launch(Dispatchers.IO) {
+                            val downloadResult = cache.downloadCache()
+                            snackbarHost.showFromResult(downloadResult, String())
                         }
                     } else if (updateInfo.isMerge) {
-                        val mergeResult = game.mergeCache(coroutineScope, cache)
-                        mergeResult.onFailure {
-                            snackbarHost.showFromResult(coroutineScope, mergeResult, String())
+                        coroutineScope.launch(Dispatchers.IO) {
+                            val mergeResult = game.mergeCache(cache)
+                            snackbarHost.showFromResult(mergeResult, String())
                         }
                     }
                 },

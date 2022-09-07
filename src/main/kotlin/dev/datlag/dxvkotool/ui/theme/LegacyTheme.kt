@@ -4,6 +4,8 @@ import androidx.compose.material.Colors
 import androidx.compose.material.Shapes
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
+import androidx.compose.ui.graphics.Color
+import javax.swing.plaf.ColorUIResource
 
 fun androidx.compose.material3.ColorScheme.toLegacyColors(isDark: Boolean): Colors {
     return if (isDark) {
@@ -41,4 +43,8 @@ fun androidx.compose.material3.ColorScheme.toLegacyColors(isDark: Boolean): Colo
 
 fun androidx.compose.material3.Shapes.toLegacyShapes(): Shapes {
     return Shapes(this.small, this.medium, this.large)
+}
+
+fun Color.toColorUIResource(): ColorUIResource {
+    return ColorUIResource(this.red, this.green, this.blue)
 }

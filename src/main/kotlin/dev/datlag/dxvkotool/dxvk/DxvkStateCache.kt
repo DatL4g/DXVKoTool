@@ -1,9 +1,6 @@
 package dev.datlag.dxvkotool.dxvk
 
-import dev.datlag.dxvkotool.common.existsSafely
-import dev.datlag.dxvkotool.common.openWriteChannel
-import dev.datlag.dxvkotool.common.readU32
-import dev.datlag.dxvkotool.common.writeU32
+import dev.datlag.dxvkotool.common.*
 import dev.datlag.dxvkotool.io.FileExtractor
 import dev.datlag.dxvkotool.model.CacheInfo
 import dev.datlag.dxvkotool.other.*
@@ -25,7 +22,7 @@ data class DxvkStateCache(
 
     val associatedRepoItem: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    suspend fun writeTo(file: File, backup: Boolean) = runCatching {
+    suspend fun writeTo(file: File, backup: Boolean) = runSuspendCatching {
         var backupFile = file
         var createdBackup = false
         if (!file.existsSafely()) {
@@ -58,7 +55,7 @@ data class DxvkStateCache(
         writer.close()
     }
 
-    fun writeTo(writer: FileChannel) = runCatching {
+    suspend fun writeTo(writer: FileChannel) = runSuspendCatching {
         if (entries.isEmpty()) {
             throw IllegalStateException()
         }
@@ -68,7 +65,7 @@ data class DxvkStateCache(
         }
     }
 
-    fun combine(other: DxvkStateCache) = runCatching {
+    suspend fun combine(other: DxvkStateCache) = runSuspendCatching {
         if (header.version != other.header.version) {
             throw DXVKException.VersionMismatch(
                 header.version,
@@ -85,27 +82,25 @@ data class DxvkStateCache(
         )
     }
 
-    suspend fun downloadFromUrl(url: String) = runCatching {
+    suspend fun downloadFromUrl(url: String) = runSuspendCatching {
         FileExtractor.downloadToTempFile(file.nameWithoutExtension, url).getOrThrow()
     }
 
-    fun downloadCache(scope: CoroutineScope) = runCatching {
+    suspend fun downloadCache() = runSuspendCatching {
         val downloadUrl = (info.value as? CacheInfo.Url?)?.downloadUrl
         if (downloadUrl.isNullOrEmpty()) {
             throw DownloadException.NoDownloadUrl
         }
-        scope.launch(Dispatchers.IO) {
-            info.emit(CacheInfo.Loading.Download)
+        info.emit(CacheInfo.Loading.Download)
 
-            val fileResult = downloadFromUrl(downloadUrl).getOrNull() ?: throw DownloadException.InvalidFile
-            val cache = fromFile(fileResult).getOrNull()
-            info.emit(if (cache != null) {
-                val combinedCache = combine(cache).getOrThrow()
-                CacheInfo.Download.Cache(fileResult, cache, combinedCache)
-            } else {
-                CacheInfo.Download.NoCache(fileResult)
-            })
-        }
+        val fileResult = downloadFromUrl(downloadUrl).getOrNull() ?: throw DownloadException.InvalidFile
+        val cache = fromFile(fileResult).getOrNull()
+        info.emit(if (cache != null) {
+            val combinedCache = combine(cache).getOrThrow()
+            CacheInfo.Download.Cache(fileResult, cache, combinedCache)
+        } else {
+            CacheInfo.Download.NoCache(fileResult)
+        })
     }
 
     fun loadLocalFile(scope: CoroutineScope, loadFile: File) = scope.launch(Dispatchers.IO) {

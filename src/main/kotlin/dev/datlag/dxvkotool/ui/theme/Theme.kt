@@ -4,6 +4,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import mdlaf.MaterialLookAndFeel
+import mdlaf.themes.MaterialLiteTheme
+import mdlaf.themes.MaterialOceanicTheme
+import javax.swing.JDialog
+import javax.swing.JFrame
+import javax.swing.UIManager
 
 
 private val DarkColors = darkColorScheme(
@@ -50,8 +56,13 @@ fun AppTheme(
     ) {
         androidx.compose.material.MaterialTheme(
             colors = MaterialTheme.colorScheme.toLegacyColors(isDark),
-            shapes = MaterialTheme.shapes.toLegacyShapes(),
-            content = content
-        )
+            shapes = MaterialTheme.shapes.toLegacyShapes()
+        ) {
+            try {
+                val theme = MaterialLookAndFeel(MaterialOceanicTheme())
+                UIManager.setLookAndFeel(theme)
+            } catch (ignored: Throwable) { }
+            content()
+        }
     }
 }
