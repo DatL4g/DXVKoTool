@@ -10,7 +10,7 @@ plugins {
     id("com.squareup.sqldelight") version "1.5.3"
 }
 
-val appVersion = "0.1.1"
+val appVersion = "0.2.0"
 
 group = "dev.datlag"
 version = appVersion
@@ -21,8 +21,8 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val ktorfitVersion = "1.0.0-beta11"
-val ktorVersion = "2.1.0"
+val ktorfitVersion = "1.0.0-beta12"
+val ktorVersion = "2.1.1"
 
 dependencies {
     implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.2.0-alpha01-dev770")
@@ -71,7 +71,7 @@ compose.desktop {
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
 
-            modules("java.instrument", "java.management", "java.sql", "jdk.unsupported", "io.github.vincenzopalazzo.materialuiswing")
+            modules("java.instrument", "java.management", "java.prefs", "java.sql", "jdk.unsupported", "io.github.vincenzopalazzo.materialuiswing")
         }
     }
 }

@@ -42,9 +42,10 @@ object FileExtractor {
         archiver.extract(downloadFile, destination)
 
         cache.info.emit(CacheInfo.Processing.FindMatchingFile)
-        return@runSuspendCatching destination.walkTopDown().firstOrNull {
+        val destinationTree = destination.walkTopDown()
+        return@runSuspendCatching destinationTree.firstOrNull {
             it.extension.equals("dxvk-cache", true) && it.nameWithoutExtension.equals(name, true)
-        } ?: destination.walkTopDown().singleOrNull() ?: throw IllegalStateException()
+        } ?: destinationTree.singleOrNull() ?: throw IllegalStateException()
     }
 
 }
