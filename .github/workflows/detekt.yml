@@ -110,6 +110,10 @@ jobs:
             ${{ github.workspace }}/detekt.sarif.json
         )" > ${{ github.workspace }}/detekt.sarif.json
 
+    - name: Print Detekt
+      run: |
+        echo "$(cat ${{ github.workspace }}/detekt.sarif.json)"
+
     # Uploads results to GitHub repository using the upload-sarif action
     - uses: github/codeql-action/upload-sarif@v2
       with:
