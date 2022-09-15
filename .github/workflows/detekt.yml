@@ -82,7 +82,8 @@ jobs:
     # Sets up the detekt cli
     - name: Setup Detekt
       run: |
-        dest=$( mktemp -d )
+        dest=${{ github.workspace }}/../detekt
+        mkdir $dest
         curl --request GET \
           --url ${{ steps.detekt_info.outputs.download_url }} \
           --silent \
