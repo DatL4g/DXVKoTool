@@ -90,16 +90,12 @@ jobs:
           --location \
           --output $dest/detekt
         chmod a+x $dest/detekt
-        echo $dest >> $GITHUB_PATH
 
     # Performs static analysis using Detekt
     - name: Run Detekt
       continue-on-error: true
       run: |
-        java -jar detekt --input ${{ github.workspace }} --report sarif:${{ github.workspace }}/detekt.sarif.json
-
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+        java -jar ${{ github.workspace }}/../detekt/detekt --input ${{ github.workspace }} --report sarif:${{ github.workspace }}/detekt.sarif.json
 
     # Modifies the SARIF output produced by Detekt so that absolute URIs are relative
     # This is so we can easily map results onto their source files
