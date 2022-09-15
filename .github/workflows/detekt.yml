@@ -112,7 +112,9 @@ jobs:
 
     - name: Print Detekt
       run: |
-        echo "$(cat ${{ github.workspace }}/detekt.sarif.json)"
+        SARIF_FILE=${{ github.workspace }}/detekt.sarif.json
+        export SARIF_FILE
+        echo "$(cat $SARIF_FILE)"
 
     # Uploads results to GitHub repository using the upload-sarif action
     - uses: github/codeql-action/upload-sarif@v2
