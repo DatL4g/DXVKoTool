@@ -48,11 +48,21 @@ fun String.openInBrowser() = runCatching {
 }
 
 fun getBuildVersion(): String {
-    return (try {
-        System.getProperty("jpackage.app-version")
-    } catch (ignored: Throwable) {
-        StringRes.get().unknown
-    } ?: StringRes.get().unknown).ifEmpty {
-        StringRes.get().unknown
+    return systemProperty("jpackage.app-version") ?: StringRes.get().unknown
+}
+
+fun systemProperty(key: String): String? = try {
+    System.getProperty(key).ifEmpty {
+        null
     }
+} catch (ignored: Throwable) {
+    null
+}
+
+fun systemEnv(key: String): String? = try {
+    System.getenv(key).ifEmpty {
+        null
+    }
+} catch (ignored: Throwable) {
+    null
 }

@@ -2,12 +2,14 @@ package dev.datlag.dxvkotool.other
 
 import de.jensklingenberg.ktorfit.create
 import de.jensklingenberg.ktorfit.ktorfit
+import dev.datlag.dxvkotool.common.systemProperty
 import dev.datlag.dxvkotool.network.GitHub
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.apache.commons.io.FileUtils
 import org.apache.tika.Tika
 
 object Constants {
@@ -47,4 +49,6 @@ object Constants {
     }
 
     val githubService = githubKtorfit.create<GitHub>()
+
+    val userDir: String = systemProperty("user.home") ?: FileUtils.getUserDirectoryPath()
 }

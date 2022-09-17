@@ -16,11 +16,11 @@ object SteamIO {
         flatpakAcfFlow.emit(getFlatpakAcf())
     }
 
-    private fun getDefaultAcf() = (File(System.getProperty("user.home"), Constants.STEAM_DEFAULT_ROOT).listFiles() ?: emptyArray()).filter {
+    private fun getDefaultAcf() = (File(Constants.userDir, Constants.STEAM_DEFAULT_ROOT).listFiles() ?: emptyArray()).filter {
         it.extension.equals("acf", true)
     }
 
-    private fun getFlatpakAcf() = (File(System.getProperty("user.home"), Constants.STEAM_FLATPAK_ROOT).listFiles() ?: emptyArray()).filter {
+    private fun getFlatpakAcf() = (File(Constants.userDir, Constants.STEAM_FLATPAK_ROOT).listFiles() ?: emptyArray()).filter {
         it.extension.equals("acf", true)
     }
 
@@ -39,13 +39,13 @@ object SteamIO {
     }.flowOn(Dispatchers.IO)
 
     val defaultShaderCacheFoldersFlow = flow<List<File>> {
-        emit((File(System.getProperty("user.home"), Constants.STEAM_SHADER_DEFAULT_ROOT).listFiles() ?: emptyArray()).filter {
+        emit((File(Constants.userDir, Constants.STEAM_SHADER_DEFAULT_ROOT).listFiles() ?: emptyArray()).filter {
             it.isDirectory
         })
     }.flowOn(Dispatchers.IO)
 
     val flatpakShaderCacheFoldersFlow = flow<List<File>> {
-        emit((File(System.getProperty("user.home"), Constants.STEAM_SHADER_FLATPAK_ROOT).listFiles() ?: emptyArray()).filter {
+        emit((File(Constants.userDir, Constants.STEAM_SHADER_FLATPAK_ROOT).listFiles() ?: emptyArray()).filter {
             it.isDirectory
         })
     }.flowOn(Dispatchers.IO)

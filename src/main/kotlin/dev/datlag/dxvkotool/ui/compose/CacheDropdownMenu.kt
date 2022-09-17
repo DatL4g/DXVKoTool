@@ -26,6 +26,7 @@ fun CacheDropdownMenu(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHost = LocalSnackbarHost.current
+    val isConnectDialogOpen = remember { mutableStateOf(false) }
 
     var isLoadLocalFileOpen by remember { mutableStateOf(false) }
 
@@ -37,6 +38,8 @@ fun CacheDropdownMenu(
             }
         }
     }
+
+    ConnectDialog(isConnectDialogOpen)
 
     DropdownMenu(
         expanded = isMenuOpen.value,
@@ -52,7 +55,8 @@ fun CacheDropdownMenu(
         }
         DropdownMenuItem(onClick = {
             isMenuOpen.value = false
-        }, enabled = false) {
+            isConnectDialogOpen.value = true
+        }, enabled = true) {
             Icon(Icons.Filled.Link, StringRes.get().connectRepoItem)
             Spacer(modifier = Modifier.padding(4.dp))
             Text(StringRes.get().connectRepoItem)

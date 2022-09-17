@@ -21,7 +21,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val ktorfitVersion = "1.0.0-beta12"
+val ktorfitVersion = "1.0.0-beta13"
 val ktorVersion = "2.1.1"
 
 dependencies {
@@ -29,7 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.jetbrains.compose.material3:material3:1.2.0-alpha01-dev770")
     implementation("org.jetbrains.compose.material:material-icons-extended:1.2.0-alpha01-dev620")
-    implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.2")
+    implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -71,7 +71,7 @@ compose.desktop {
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
 
-            modules("java.instrument", "java.management", "java.prefs", "java.sql", "jdk.unsupported", "io.github.vincenzopalazzo.materialuiswing")
+            modules("java.instrument", "java.management", "java.prefs", "java.sql", "jdk.unsupported")
         }
     }
 }

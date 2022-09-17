@@ -6,6 +6,7 @@ import androidx.compose.ui.window.AwtWindow
 import dev.datlag.dxvkotool.common.canReadSafely
 import dev.datlag.dxvkotool.common.canWriteSafely
 import dev.datlag.dxvkotool.common.existsSafely
+import dev.datlag.dxvkotool.common.systemEnv
 import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.StringRes
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +50,7 @@ fun SaveFileDialog(
                 }
             }
         }.apply {
-            directory = System.getProperty("user.home")
+            directory = Constants.userDir
             file = fileName
         }
     },
@@ -82,7 +83,7 @@ fun LoadFileDialog(
                 }
             }
         }.apply {
-            directory = System.getProperty("user.home")
+            directory = Constants.userDir
             setFilenameFilter { _, name ->
                 name.endsWith(".dxvk-cache", true)
             }
@@ -100,7 +101,7 @@ fun SaveJFileDialog(
     onCloseRequest: (file: File?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val fileChooser = JFileChooser(System.getProperty("user.home"))
+    val fileChooser = JFileChooser(Constants.userDir)
     fileChooser.selectedFile = File(fileName)
 
     coroutineScope.launch(Dispatchers.IO) {
@@ -138,7 +139,7 @@ fun LoadJFileDialog(
     onCloseRequest: (file: File?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val fileChooser = JFileChooser(System.getProperty("user.home"))
+    val fileChooser = JFileChooser(Constants.userDir)
     fileChooser.fileSelectionMode = JFileChooser.FILES_ONLY
     fileChooser.fileFilter = FileNameExtensionFilter("Game cache", "dxvk-cache")
 
@@ -169,9 +170,7 @@ fun CombinedSaveFileDialog(
     fileName: String,
     onCloseRequest: (file: File?) -> Unit
 ) {
-    val desktop = runCatching {
-        System.getenv("XDG_CURRENT_DESKTOP")
-    }.getOrNull() ?: String()
+    val desktop = systemEnv("XDG_CURRENT_DESKTOP") ?: String()
     if (desktop.equals(Constants.GNOME, true)) {
         SaveFileDialog(fileName, null, onCloseRequest)
     } else {
@@ -183,9 +182,7 @@ fun CombinedSaveFileDialog(
 fun CombinedLoadFileDialog(
     onCloseRequest: (file: File?) -> Unit
 ) {
-    val desktop = runCatching {
-        System.getenv("XDG_CURRENT_DESKTOP")
-    }.getOrNull() ?: String()
+    val desktop = systemEnv("XDG_CURRENT_DESKTOP") ?: String()
     if (desktop.equals(Constants.GNOME, true)) {
         LoadFileDialog(null, onCloseRequest)
     } else {

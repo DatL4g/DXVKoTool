@@ -1,14 +1,20 @@
 package dev.datlag.dxvkotool.network
 
+import dev.datlag.dxvkotool.model.Node
 import dev.datlag.dxvkotool.model.RepoInfo
 import dev.datlag.dxvkotool.model.RepoStructure
 import dev.datlag.dxvkotool.other.Constants
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 
 object OnlineDXVK {
 
     val dxvkRepoStructureFlow: MutableStateFlow<List<RepoStructure>> = MutableStateFlow(emptyList())
+
+    val selectedNodeFlow: MutableStateFlow<Node?> = MutableStateFlow(null)
+    val dxvkRepoNodeFlow = combine(dxvkRepoStructureFlow, selectedNodeFlow) { t1, t2 ->
+        t2?.childs ?: t1.map { repo -> repo.toNodeStructure() }.flatten()
+    }.flowOn(Dispatchers.IO)
 
     private val repoMap: Set<RepoInfo> = setOf(
         RepoInfo(
