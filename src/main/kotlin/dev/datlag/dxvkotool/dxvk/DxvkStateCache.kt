@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
@@ -21,6 +22,8 @@ data class DxvkStateCache(
     val info: MutableStateFlow<CacheInfo> = MutableStateFlow(CacheInfo.Loading.Url)
 
     val associatedRepoItem: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    val backupFiles: MutableStateFlow<List<File>> = MutableStateFlow(file.findBackupFiles())
 
     suspend fun writeTo(file: File, backup: Boolean) = runSuspendCatching {
         var backupFile = file
@@ -53,6 +56,7 @@ data class DxvkStateCache(
 
         writer.force(true)
         writer.close()
+        backupFiles.emit(file.findBackupFiles())
     }
 
     suspend fun writeTo(writer: FileChannel) = runSuspendCatching {
@@ -118,6 +122,14 @@ data class DxvkStateCache(
         } else {
             CacheInfo.Download.NoCache(loadFile)
         })
+    }
+
+    fun reloadBackupFiles(scope: CoroutineScope) = scope.launch(Dispatchers.IO) {
+        reloadBackupFiles()
+    }
+
+    suspend fun reloadBackupFiles() = withContext(Dispatchers.IO) {
+        backupFiles.emit(file.findBackupFiles())
     }
 
     data class Header(

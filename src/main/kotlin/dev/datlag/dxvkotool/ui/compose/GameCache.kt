@@ -29,6 +29,8 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
     val isMenuOpen = remember { mutableStateOf(false) }
     val snackbarHost = LocalSnackbarHost.current
     val updateInfo = info.toButtonInfo(cache)
+    val backupFiles by cache.backupFiles.collectAsState()
+    val isBackupOpen = remember { mutableStateOf(false) }
 
     if (isExportOpen) {
         CombinedSaveFileDialog(cache.file.name) { destFile ->
@@ -41,6 +43,8 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
             }
         }
     }
+
+    BackupRestoreDialog(cache, isBackupOpen)
 
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Column(modifier = Modifier.fillMaxWidth(0.5F).fillMaxHeight()) {
@@ -104,11 +108,14 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 }
             }
             Button(onClick = {
-
-            }, modifier = Modifier.fillMaxWidth(), enabled = false) {
+                cache.reloadBackupFiles(coroutineScope)
+                isBackupOpen.value = true
+            }, modifier = Modifier.fillMaxWidth(), enabled = backupFiles.isNotEmpty()) {
                 Icon(
-                    Icons.Filled.SettingsBackupRestore, StringRes.get().restoreBackup, modifier = Modifier.size(
-                        ButtonDefaults.IconSize))
+                    Icons.Filled.SettingsBackupRestore,
+                    StringRes.get().restoreBackup,
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(StringRes.get().restoreBackup)
             }

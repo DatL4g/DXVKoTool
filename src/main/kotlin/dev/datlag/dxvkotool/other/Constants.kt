@@ -11,6 +11,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.apache.commons.io.FileUtils
 import org.apache.tika.Tika
+import java.time.format.DateTimeFormatter
 
 object Constants {
     const val STEAM_DEFAULT_ROOT = "/.steam/steam/steamapps/"
@@ -51,4 +52,5 @@ object Constants {
     val githubService = githubKtorfit.create<GitHub>()
 
     val userDir: String = systemProperty("user.home") ?: FileUtils.getUserDirectoryPath()
+    val defaultDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 }

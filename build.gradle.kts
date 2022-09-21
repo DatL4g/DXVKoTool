@@ -27,6 +27,7 @@ val ktorVersion = "2.1.1"
 dependencies {
     implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.2.0-alpha01-dev770")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("org.jetbrains.compose.material3:material3:1.2.0-alpha01-dev770")
     implementation("org.jetbrains.compose.material:material-icons-extended:1.2.0-alpha01-dev620")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")

@@ -7,6 +7,8 @@ import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.MergeException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapMerge
 import java.io.File
 
 sealed class Game(
@@ -21,7 +23,7 @@ sealed class Game(
     suspend fun loadCacheInfo(): Nothing = coroutineScope {
         OnlineDXVK.dxvkRepoStructureFlow.collect { repoStructures ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
-            matchingCacheWithItem.map { (t, u) ->
+            matchingCacheWithItem.forEach { (t, u) ->
                 val cacheInfo = if (u == null) {
                     CacheInfo.None
                 } else {
