@@ -46,30 +46,30 @@ data class RepoStructure(
     }
 
     fun toNodeStructure(): List<Node> {
-        fun put(struct: MutableList<Node>, root: String, rest: String) {
+        fun put(struct: MutableList<Node>, root: String, rest: String, item: StructureItem) {
             val tmp = rest.split("/".toRegex(), 2)
 
             val rootDir = struct.firstOrNull { it.path == root } ?: run {
-                val node = Node(root)
+                val node = Node(root, item)
                 struct.add(node)
                 node
             }
             if (tmp.size > 1) {
-                put(rootDir.childs, tmp[0], tmp[1])
+                put(rootDir.childs, tmp[0], tmp[1], item)
             } else {
                 rootDir.childs.firstOrNull { it.path == tmp[0] } ?: run {
-                    rootDir.childs.add(Node(tmp[0]))
+                    rootDir.childs.add(Node(tmp[0], item))
                 }
             }
         }
 
-        val list = tree.map { it.path }
+        val list = tree.map { it }
         val structure: MutableList<Node> = mutableListOf()
 
         list.forEach {
-            val tmp = it.split("/".toRegex(), 2)
+            val tmp = it.path.split("/".toRegex(), 2)
             if (tmp.size > 1) {
-                put(structure, tmp[0], tmp[1])
+                put(structure, tmp[0], tmp[1], it)
             }
         }
 

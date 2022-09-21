@@ -95,7 +95,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                         maxLines = 1
                     )
                 }
-                CacheDropdownMenu(cache, isMenuOpen)
+                CacheDropdownMenu(game, cache, isMenuOpen)
                 Spacer(modifier = Modifier.padding(2.dp))
                 Button(onClick = {
                     isMenuOpen.value = true

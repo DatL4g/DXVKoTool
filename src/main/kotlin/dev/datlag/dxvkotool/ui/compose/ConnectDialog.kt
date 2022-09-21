@@ -13,8 +13,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import dev.datlag.dxvkotool.common.withAlpha
 import dev.datlag.dxvkotool.model.Node
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.StringRes
@@ -23,7 +26,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ConnectDialog(
-    isDialogOpen: MutableState<Boolean>
+    isDialogOpen: MutableState<Boolean>,
+    onSelected: (Node?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -64,11 +68,12 @@ fun ConnectDialog(
                         )
                     }
                     TextButton(onClick = {
-                        println(selectedItem.value)
-                    }, enabled = selectedItem.value != null) {
+                        onSelected.invoke(selectedItem.value)
+                        closeRequest()
+                    }, enabled = selectedItem.value?.hasChilds() == false) {
                         Text(
                             text = "Select",
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = if (selectedItem.value?.hasChilds() == false) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.withAlpha(0.5F)
                         )
                     }
                 }
@@ -81,10 +86,10 @@ fun ConnectDialog(
 @Composable
 fun ConnectItem(item: Node, selected: MutableState<Node?>) {
     val coroutineScope = rememberCoroutineScope()
-    var clickedTwice = false
+    val isSelected = selected.value == item
 
     Row(modifier = Modifier.onClick {
-        if (clickedTwice) {
+        if (isSelected) {
             if (item.hasChilds()) {
                 coroutineScope.launch(Dispatchers.IO) {
                     OnlineDXVK.selectedNodeFlow.emit(item)
@@ -92,14 +97,10 @@ fun ConnectItem(item: Node, selected: MutableState<Node?>) {
             } else {
                 selected.value = item
             }
-            clickedTwice = false
         } else {
-            if (!item.hasChilds()) {
-                selected.value = item
-            }
-            clickedTwice = true
+            selected.value = item
         }
-    }) {
+    }.background(if (isSelected) MaterialTheme.colorScheme.onBackground.withAlpha(0.5F) else MaterialTheme.colorScheme.background)) {
         Icon(
             if (item.hasChilds()) Icons.Filled.Folder else Icons.Filled.InsertDriveFile, item.path
         )

@@ -15,12 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.datlag.dxvkotool.LocalSnackbarHost
 import dev.datlag.dxvkotool.common.showFromResult
+import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
+import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.other.StringRes
 import java.awt.Desktop
 
 @Composable
 fun CacheDropdownMenu(
+    game: Game,
     cache: DxvkStateCache,
     isMenuOpen: MutableState<Boolean>
 ) {
@@ -39,7 +42,11 @@ fun CacheDropdownMenu(
         }
     }
 
-    ConnectDialog(isConnectDialogOpen)
+    ConnectDialog(isConnectDialogOpen) {
+        if (it != null && game is Game.Steam) {
+            DB.database.steamGameQueries.insert(game.manifest.appId.toLong(), cache.file.name, it.item.path)
+        }
+    }
 
     DropdownMenu(
         expanded = isMenuOpen.value,
