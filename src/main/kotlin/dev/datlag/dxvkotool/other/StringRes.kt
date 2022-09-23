@@ -49,6 +49,13 @@ interface AppStringRes {
     val extracting: String
     val matching: String
     val creating: String
+
+    val delete: String
+    val restore: String
+    val cancel: String
+    val size: String
+    val backupDate: String
+    val restoreBackupTitlePlaceholder: String
 }
 
 object StringRes {
@@ -103,6 +110,13 @@ object StringRes {
         override val extracting: String = "Extracting"
         override val matching: String = "Matching"
         override val creating: String = "Creating"
+
+        override val delete: String = "Delete"
+        override val restore: String =  "Restore"
+        override val cancel: String = "Cancel"
+        override val size: String = "Size"
+        override val backupDate: String = "Backup Date (ISO)"
+        override val restoreBackupTitlePlaceholder: String = "Restore %s backup"
     }
 
     fun get() = en

@@ -92,3 +92,9 @@ fun File.sizeSafely(): Long {
         Files.readAttributes(this.toPath(), BasicFileAttributes::class.java).size()
     }.getOrNull() ?: 0L
 }
+
+fun File.deleteSafely(): Boolean {
+    return runCatching {
+        this.delete()
+    }.getOrNull() ?: false
+}
