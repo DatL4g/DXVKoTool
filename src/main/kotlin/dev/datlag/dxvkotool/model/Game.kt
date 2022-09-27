@@ -1,14 +1,13 @@
 package dev.datlag.dxvkotool.model
 
 import dev.datlag.dxvkotool.common.runSuspendCatching
+import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.MergeException
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.*
 import java.io.File
 
 sealed class Game(
@@ -16,12 +15,25 @@ sealed class Game(
     open val path: File,
     open val caches: MutableStateFlow<List<DxvkStateCache>>
 ) {
+
+    abstract val connectDBItems: Flow<Any>
+
     fun loadCacheInfo(scope: CoroutineScope) = scope.launch(Dispatchers.IO) {
         loadCacheInfo()
     }
 
-    suspend fun loadCacheInfo(): Nothing = coroutineScope {
-        OnlineDXVK.dxvkRepoStructureFlow.collect { repoStructures ->
+    suspend fun loadCacheInfo() = coroutineScope {
+        combine(
+            OnlineDXVK.dxvkRepoStructureFlow,
+            caches.flatMapLatest {
+                combine(it.map { cache -> cache.associatedRepoItem }) { list ->
+                    list
+                }
+            },
+            connectDBItems
+        ) { t1, t2, _ ->
+            t1 to t2
+        }.distinctUntilChanged().collect { (repoStructures, _) ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
             matchingCacheWithItem.forEach { (t, u) ->
                 val cacheInfo = if (u == null) {
@@ -57,11 +69,22 @@ sealed class Game(
         val manifest: AppManifest,
         override val path: File,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
-    ) : Game(manifest.name, path, caches)
+    ) : Game(manifest.name, path, caches) {
+        override val connectDBItems = combine(caches, DB.steamGames) { t1, t2 ->
+            val matchingDbGameItems = t2.filter { it.appId == manifest.appId.toLongOrNull() }
+            matchingDbGameItems.map { dbGame ->
+                val matchingCache = t1.firstOrNull { dbGame.cacheName == it.file.name }
+                matchingCache?.associatedRepoItem?.emit(dbGame.repoItem)
+                matchingCache to dbGame.repoItem
+            }
+        }.distinctUntilChanged()
+    }
 
     data class Other(
         override val name: String,
         override val path: File,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
-    ) : Game(name, path, caches)
+    ) : Game(name, path, caches) {
+        override val connectDBItems: Flow<Unit> = flow {  }
+    }
 }

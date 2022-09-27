@@ -8,19 +8,14 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.network.OnlineSteam
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
 fun AsyncImage(appId: String, modifier: Modifier = Modifier) {
-    val coroutineScope = rememberCoroutineScope()
-    val bitmap: MutableState<ImageBitmap?> = remember { mutableStateOf(null) }
-
-    coroutineScope.launch(Dispatchers.IO) {
-        bitmap.value = OnlineSteam.getBitmapFromAppId(appId)
+    val image: ImageBitmap? by produceState<ImageBitmap?>(null) {
+        value = OnlineSteam.getBitmapFromAppId(appId)
     }
 
-    bitmap.value?.let {
+    image?.let {
         Image(
             bitmap = it, null,
             modifier = modifier,

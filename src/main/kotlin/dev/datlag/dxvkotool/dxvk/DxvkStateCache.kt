@@ -3,10 +3,13 @@ package dev.datlag.dxvkotool.dxvk
 import dev.datlag.dxvkotool.common.*
 import dev.datlag.dxvkotool.io.FileExtractor
 import dev.datlag.dxvkotool.model.CacheInfo
+import dev.datlag.dxvkotool.model.RepoStructure
+import dev.datlag.dxvkotool.network.OnlineDXVK
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import dev.datlag.dxvkotool.other.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File

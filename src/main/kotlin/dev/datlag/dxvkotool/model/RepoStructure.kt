@@ -31,6 +31,10 @@ data class RepoStructure(
                 item.path.endsWith("${entry.file.name}.md", true)
             } ?: matchingItems.firstOrNull { item ->
                 item.path.endsWith("${entry.file.name}.txt", true)
+            } ?: matchingItems.firstOrNull { item ->
+                item.path.endsWith("${entry.file.name}.tar.xz.md", true)
+            } ?: matchingItems.firstOrNull { item ->
+                item.path.endsWith("${entry.file.name}.tar.xz.txt", true)
             })
         }
 
