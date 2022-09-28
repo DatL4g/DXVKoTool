@@ -1,13 +1,21 @@
 package dev.datlag.dxvkotool.io
 
-import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.model.AppManifest
-import dev.datlag.dxvkotool.model.CacheInfo
 import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.other.Constants
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import java.io.File
 
 object SteamIO {
@@ -29,13 +37,20 @@ object SteamIO {
     val flatpakAcfFlow: MutableStateFlow<List<File>> = MutableStateFlow(emptyList())
 
     val acfFlow = combine(defaultAcfFlow, flatpakAcfFlow) { t1, t2 ->
-        setOf(*t1.toTypedArray(), *t2.toTypedArray()).toList()
+        mutableSetOf<File>().apply {
+            addAll(t1)
+            addAll(t2)
+        }.toList()
     }.flowOn(Dispatchers.IO)
 
     val appManifestFlow: Flow<List<AppManifest>> = acfFlow.transform { acfFiles ->
-        return@transform emit(coroutineScope { acfFiles.map { async {
-            Acf.toAppManifest(it.readText(), it.parentFile?.absolutePath ?: it.absolutePath).getOrNull()
-        } } }.awaitAll().filterNotNull())
+        return@transform emit(coroutineScope {
+            acfFiles.map {
+                async {
+                    Acf.toAppManifest(it.readText(), it.parentFile?.absolutePath ?: it.absolutePath).getOrNull()
+                }
+            }
+        }.awaitAll().filterNotNull())
     }.flowOn(Dispatchers.IO)
 
     val defaultShaderCacheFoldersFlow = flow<List<File>> {
@@ -51,7 +66,10 @@ object SteamIO {
     }.flowOn(Dispatchers.IO)
 
     val shaderCacheFoldersFlow = combine(defaultShaderCacheFoldersFlow, flatpakShaderCacheFoldersFlow) { t1, t2 ->
-        setOf(*t1.toTypedArray(), *t2.toTypedArray()).toList()
+        mutableSetOf<File>().apply {
+            addAll(t1)
+            addAll(t2)
+        }.toList()
     }.flowOn(Dispatchers.IO)
 
     val steamGamesFlow = combine(appManifestFlow, shaderCacheFoldersFlow) { t1, t2 ->

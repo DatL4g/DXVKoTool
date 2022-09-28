@@ -53,7 +53,10 @@ fun File.findBackupFiles(): List<File> {
         val parent = this.parentFile
         if (parent.existsSafely() && parent.canReadSafely()) {
             parent.listFilesSafely().filter {
-                it.existsSafely() && it.canReadSafely() && it.isFileSafely() && it.name.startsWith(this@findBackupFiles.name) && it.extension.equals("bak", true)
+                it.existsSafely() && it.canReadSafely() && it.isFileSafely() && it.name.startsWith(this@findBackupFiles.name) && it.extension.equals(
+                    "bak",
+                    true
+                )
             }
         } else {
             emptyList()
@@ -101,7 +104,7 @@ fun File.deleteSafely(): Boolean {
 
 fun File.createBackup(): File {
     var backupFile = this
-    while(true) {
+    while (true) {
         backupFile = File(backupFile.parentFile, "${backupFile.name}.bak")
         if (backupFile.existsSafely()) {
             continue

@@ -1,15 +1,21 @@
 package dev.datlag.dxvkotool.dxvk
 
-import dev.datlag.dxvkotool.common.*
+import dev.datlag.dxvkotool.common.createBackup
+import dev.datlag.dxvkotool.common.existsSafely
+import dev.datlag.dxvkotool.common.findBackupFiles
+import dev.datlag.dxvkotool.common.openWriteChannel
+import dev.datlag.dxvkotool.common.readU32
+import dev.datlag.dxvkotool.common.runSuspendCatching
+import dev.datlag.dxvkotool.common.writeU32
 import dev.datlag.dxvkotool.io.FileExtractor
 import dev.datlag.dxvkotool.model.CacheInfo
-import dev.datlag.dxvkotool.model.RepoStructure
-import dev.datlag.dxvkotool.network.OnlineDXVK
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import dev.datlag.dxvkotool.other.*
+import dev.datlag.dxvkotool.other.DXVK
+import dev.datlag.dxvkotool.other.DXVKException
+import dev.datlag.dxvkotool.other.DownloadException
+import dev.datlag.dxvkotool.other.ReadErrorType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -101,24 +107,28 @@ data class DxvkStateCache(
 
         info.emit(CacheInfo.Processing.CreatingCache)
         val cache = fromFile(fileResult).getOrNull()
-        info.emit(if (cache != null) {
-            val combinedCache = combine(cache).getOrThrow()
-            CacheInfo.Download.Cache(fileResult, cache, combinedCache)
-        } else {
-            CacheInfo.Download.NoCache(fileResult)
-        })
+        info.emit(
+            if (cache != null) {
+                val combinedCache = combine(cache).getOrThrow()
+                CacheInfo.Download.Cache(fileResult, cache, combinedCache)
+            } else {
+                CacheInfo.Download.NoCache(fileResult)
+            }
+        )
     }
 
     fun loadLocalFile(scope: CoroutineScope, loadFile: File) = scope.launch(Dispatchers.IO) {
         info.emit(CacheInfo.Loading.Local)
 
         val cache = fromFile(loadFile).getOrNull()
-        info.emit(if (cache != null) {
-            val combinedCache = combine(cache).getOrThrow()
-            CacheInfo.Download.Cache(loadFile, cache, combinedCache)
-        } else {
-            CacheInfo.Download.NoCache(loadFile)
-        })
+        info.emit(
+            if (cache != null) {
+                val combinedCache = combine(cache).getOrThrow()
+                CacheInfo.Download.Cache(loadFile, cache, combinedCache)
+            } else {
+                CacheInfo.Download.NoCache(loadFile)
+            }
+        )
     }
 
     fun reloadBackupFiles(scope: CoroutineScope) = scope.launch(Dispatchers.IO) {

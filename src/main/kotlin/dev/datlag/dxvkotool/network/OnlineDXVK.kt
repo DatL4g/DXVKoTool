@@ -4,8 +4,14 @@ import dev.datlag.dxvkotool.model.Node
 import dev.datlag.dxvkotool.model.RepoInfo
 import dev.datlag.dxvkotool.model.RepoStructure
 import dev.datlag.dxvkotool.other.Constants
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 object OnlineDXVK {
 

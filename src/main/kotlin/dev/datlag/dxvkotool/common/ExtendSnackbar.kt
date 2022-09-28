@@ -35,9 +35,14 @@ private fun <T> snackbarMessage(result: Result<T>, success: String) = if (result
             StringRes.get().fileReadBytesError
         }
     }
+
     is DXVKException.InvalidEntry -> StringRes.get().fileInvalidEntry
     is DXVKException.UnexpectedEndOfFile -> StringRes.get().fileUnexpectedEnd
-    is DXVKException.VersionMismatch -> StringRes.get().cacheVersionMismatchPlaceholder.format(exception.current.toInt(), exception.new.toInt())
+    is DXVKException.VersionMismatch -> StringRes.get().cacheVersionMismatchPlaceholder.format(
+        exception.current.toInt(),
+        exception.new.toInt()
+    )
+
     is DownloadException.NoDownloadUrl -> StringRes.get().noDownloadUrlProvided
     is DownloadException.InvalidFile -> StringRes.get().downloadFileInvalid
     else -> {

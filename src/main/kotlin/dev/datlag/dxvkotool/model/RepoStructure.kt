@@ -3,7 +3,7 @@ package dev.datlag.dxvkotool.model
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.Base64
 
 @Serializable
 data class RepoStructure(

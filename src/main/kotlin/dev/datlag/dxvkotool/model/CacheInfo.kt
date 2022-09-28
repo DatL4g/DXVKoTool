@@ -1,10 +1,21 @@
 package dev.datlag.dxvkotool.model
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.HourglassBottom
+import androidx.compose.material.icons.filled.InsertDriveFile
+import androidx.compose.material.icons.filled.MergeType
+import androidx.compose.material.icons.filled.QuestionAnswer
+import androidx.compose.material.icons.filled.Search
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.other.StringRes
 import java.io.File
+import kotlin.Boolean
+import kotlin.String
 
 sealed class CacheInfo {
 

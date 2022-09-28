@@ -2,19 +2,31 @@ package dev.datlag.dxvkotool.ui.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.onClick
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.InsertDriveFile
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import dev.datlag.dxvkotool.common.withAlpha
@@ -39,7 +51,7 @@ fun ConnectDialog(
     }
 
     val structure by OnlineDXVK.dxvkRepoNodeFlow.collectAsState(emptyList())
-    val selectedItem: MutableState<Node?> =  remember { mutableStateOf(null) }
+    val selectedItem: MutableState<Node?> = remember { mutableStateOf(null) }
 
     if (isDialogOpen.value) {
         Dialog(onCloseRequest = {
@@ -73,7 +85,9 @@ fun ConnectDialog(
                     }, enabled = selectedItem.value?.hasChilds() == false) {
                         Text(
                             text = "Select",
-                            color = if (selectedItem.value?.hasChilds() == false) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.withAlpha(0.5F)
+                            color = if (selectedItem.value?.hasChilds() == false) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.withAlpha(
+                                0.5F
+                            )
                         )
                     }
                 }

@@ -7,8 +7,13 @@ import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.MergeException
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.transform
 import java.io.File
 
 sealed class Game(
@@ -108,6 +113,6 @@ sealed class Game(
         override val path: File,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
     ) : Game(name, path, caches) {
-        override val connectDBItems: Flow<Unit> = flow {  }
+        override val connectDBItems: Flow<Unit> = flow { }
     }
 }

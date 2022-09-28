@@ -101,7 +101,8 @@ object StringRes {
         override val openFolder: String = "Open folder"
         override val close: String = "Close"
         override val donate: String = "Donate"
-        override val fullAppDescription: String = "The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches."
+        override val fullAppDescription: String =
+            "The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches."
         override val unsupportedSystem: String = "Unsupported system"
 
         override val githubPlaceholder: String = "GitHub: %s"
@@ -113,7 +114,7 @@ object StringRes {
         override val creating: String = "Creating"
 
         override val delete: String = "Delete"
-        override val restore: String =  "Restore"
+        override val restore: String = "Restore"
         override val cancel: String = "Cancel"
         override val size: String = "Size"
         override val backupDate: String = "Backup Date (ISO)"

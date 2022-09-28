@@ -1,4 +1,5 @@
 package dev.datlag.dxvkotool.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val md_theme_dark_primary = Color(0xFF1b2838)

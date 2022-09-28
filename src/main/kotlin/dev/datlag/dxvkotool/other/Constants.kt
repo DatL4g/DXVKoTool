@@ -4,10 +4,10 @@ import de.jensklingenberg.ktorfit.create
 import de.jensklingenberg.ktorfit.ktorfit
 import dev.datlag.dxvkotool.common.systemProperty
 import dev.datlag.dxvkotool.network.GitHub
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.apache.commons.io.FileUtils
 import org.apache.tika.Tika

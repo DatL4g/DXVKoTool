@@ -16,7 +16,15 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.configureSwingGlobalsForCompose
@@ -41,10 +49,9 @@ val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No Snackb
 @Preview
 fun App() {
     val coroutineScope = rememberCoroutineScope()
+    val scaffoldState: ScaffoldState = rememberScaffoldState()
     SteamIO.reload(coroutineScope)
     OnlineDXVK.getDXVKCaches(coroutineScope)
-
-    val scaffoldState: ScaffoldState = rememberScaffoldState()
 
     CompositionLocalProvider(LocalSnackbarHost provides scaffoldState.snackbarHostState) {
         AppTheme {

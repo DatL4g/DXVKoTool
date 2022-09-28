@@ -37,7 +37,8 @@ fun String.openInBrowser() = runCatching {
             if (Runtime.getRuntime().exec(command).waitFor() == 0) {
                 return@runCatching
             }
-        } catch (ignored: Throwable) { }
+        } catch (ignored: Throwable) {
+        }
     }
 
     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
