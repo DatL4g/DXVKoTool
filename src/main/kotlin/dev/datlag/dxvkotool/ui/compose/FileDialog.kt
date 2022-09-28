@@ -103,6 +103,7 @@ fun SaveJFileDialog(
     val coroutineScope = rememberCoroutineScope()
     val fileChooser = JFileChooser(Constants.userDir)
     fileChooser.selectedFile = File(fileName)
+    fileChooser.isFileHidingEnabled = false
 
     coroutineScope.launch(Dispatchers.IO) {
         val option = fileChooser.showSaveDialog(null)
@@ -141,7 +142,8 @@ fun LoadJFileDialog(
     val coroutineScope = rememberCoroutineScope()
     val fileChooser = JFileChooser(Constants.userDir)
     fileChooser.fileSelectionMode = JFileChooser.FILES_ONLY
-    fileChooser.fileFilter = FileNameExtensionFilter("Game cache", "dxvk-cache")
+    fileChooser.fileFilter = FileNameExtensionFilter("Game cache (.dxvk-cache)", "dxvk-cache")
+    fileChooser.isFileHidingEnabled = false
 
     coroutineScope.launch(Dispatchers.IO) {
         val option = fileChooser.showOpenDialog(null)
