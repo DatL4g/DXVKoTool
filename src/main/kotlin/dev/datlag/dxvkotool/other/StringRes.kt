@@ -56,6 +56,7 @@ interface AppStringRes {
     val size: String
     val backupDate: String
     val restoreBackupTitlePlaceholder: String
+    val restoreSuccessful: String
 }
 
 object StringRes {
@@ -117,6 +118,7 @@ object StringRes {
         override val size: String = "Size"
         override val backupDate: String = "Backup Date (ISO)"
         override val restoreBackupTitlePlaceholder: String = "Restore %s backup"
+        override val restoreSuccessful: String = "Restore backup successful"
     }
 
     fun get() = en

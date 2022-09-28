@@ -48,7 +48,7 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
         if (restoreFile != null) {
             coroutineScope.launch(Dispatchers.IO) {
                 val restoreResult = game.restoreBackup(cache, restoreFile)
-                snackbarHost.showFromResult(restoreResult, StringRes.get().restore)
+                snackbarHost.showFromResult(restoreResult, StringRes.get().restoreSuccessful)
             }
         }
     }
