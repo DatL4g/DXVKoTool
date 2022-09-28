@@ -44,7 +44,14 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
         }
     }
 
-    BackupRestoreDialog(cache, isBackupOpen)
+    BackupRestoreDialog(cache, isBackupOpen) { restoreFile ->
+        if (restoreFile != null) {
+            coroutineScope.launch(Dispatchers.IO) {
+                val restoreResult = game.restoreBackup(cache, restoreFile)
+                snackbarHost.showFromResult(restoreResult, StringRes.get().restore)
+            }
+        }
+    }
 
     Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Column(modifier = Modifier.fillMaxWidth(0.5F).fillMaxHeight()) {

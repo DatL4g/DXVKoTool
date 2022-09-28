@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.10"
-    id("org.jetbrains.compose") version "1.2.0-alpha01-dev770"
+    id("org.jetbrains.compose") version "1.2.0-beta01"
     kotlin("plugin.serialization") version "1.7.10"
     id("com.google.devtools.ksp") version "1.7.10-1.0.6"
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -21,15 +21,15 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val ktorfitVersion = "1.0.0-beta13"
+val ktorfitVersion = "1.0.0-beta14"
 val ktorVersion = "2.1.1"
 
 dependencies {
-    implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.2.0-alpha01-dev770")
+    implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.2.0-beta01")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-    implementation("org.jetbrains.compose.material3:material3:1.2.0-alpha01-dev770")
-    implementation("org.jetbrains.compose.material:material-icons-extended:1.2.0-alpha01-dev620")
+    implementation("org.jetbrains.compose.material3:material3:1.2.0-beta01")
+    implementation("org.jetbrains.compose.material:material-icons-extended:1.2.0-beta01")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")

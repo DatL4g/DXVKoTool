@@ -1,5 +1,6 @@
 package dev.datlag.dxvkotool.model
 
+import dev.datlag.dxvkotool.common.createBackup
 import dev.datlag.dxvkotool.common.runSuspendCatching
 import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
@@ -60,6 +61,31 @@ sealed class Game(
         }
 
         caches.emit(currentCaches)
+    }
+
+    private suspend fun restoreFile(cache: DxvkStateCache, restoreFile: File) = runSuspendCatching {
+        val backupFile = cache.file.createBackup()
+        val backupSuccess = cache.file.renameTo(backupFile)
+        val renamed = restoreFile.renameTo(cache.file)
+        if (!renamed) {
+            cache.file.delete()
+            return@runSuspendCatching restoreFile.renameTo(cache.file) && backupSuccess
+        }
+        return@runSuspendCatching backupSuccess
+    }
+
+    suspend fun restoreBackup(cache: DxvkStateCache, restoreFile: File) = runSuspendCatching {
+        val success = restoreFile(cache, restoreFile)
+        val restoreCache = DxvkStateCache.fromFile(cache.file).getOrThrow()
+
+        val currentCaches = caches.value.toMutableList()
+        val cacheIndex = currentCaches.indexOf(cache)
+        if (cacheIndex >= 0) {
+            currentCaches[cacheIndex] = restoreCache
+        }
+        caches.emit(currentCaches)
+
+        success
     }
 
     data class Steam(

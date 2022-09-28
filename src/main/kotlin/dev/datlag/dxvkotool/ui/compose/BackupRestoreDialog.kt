@@ -23,10 +23,13 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import java.io.File
-import kotlin.coroutines.coroutineContext
 
 @Composable
-fun BackupRestoreDialog(cache: DxvkStateCache, isDialogOpen: MutableState<Boolean>) {
+fun BackupRestoreDialog(
+    cache: DxvkStateCache,
+    isDialogOpen: MutableState<Boolean>,
+    onSelected: (File?) -> Unit
+) {
     val coroutineScope = rememberCoroutineScope()
     val backupFiles by cache.backupFiles.collectAsState()
     val selectedItem: MutableState<File?> = mutableStateOf(null)
@@ -82,6 +85,7 @@ fun BackupRestoreDialog(cache: DxvkStateCache, isDialogOpen: MutableState<Boolea
                         )
                     }
                     TextButton(onClick = {
+                        onSelected.invoke(selectedItem.value)
                         isDialogOpen.value = false
                     }, enabled = selectedItem.value != null) {
                         Text(
@@ -97,7 +101,10 @@ fun BackupRestoreDialog(cache: DxvkStateCache, isDialogOpen: MutableState<Boolea
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BackupItem(file: File, selected: MutableState<File?>) {
+fun BackupItem(
+    file: File,
+    selected: MutableState<File?>
+) {
     val lastModified = Instant.fromEpochMilliseconds(file.getLastModifiedOrCreated())
     val lastModifiedDate = lastModified.toLocalDateTime(TimeZone.currentSystemDefault())
     val isSelected = selected.value == file

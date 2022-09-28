@@ -34,14 +34,7 @@ data class DxvkStateCache(
         if (!file.existsSafely()) {
             file.createNewFile()
         } else {
-            while(true) {
-                backupFile = File(backupFile.parentFile, "${backupFile.name}.bak")
-                if (backupFile.existsSafely()) {
-                    continue
-                } else {
-                    break
-                }
-            }
+            backupFile = backupFile.createBackup()
 
             createdBackup = file.renameTo(backupFile)
             file.createNewFile()
@@ -60,6 +53,7 @@ data class DxvkStateCache(
         writer.force(true)
         writer.close()
         backupFiles.emit(file.findBackupFiles())
+        return@runSuspendCatching true
     }
 
     suspend fun writeTo(writer: FileChannel) = runSuspendCatching {
