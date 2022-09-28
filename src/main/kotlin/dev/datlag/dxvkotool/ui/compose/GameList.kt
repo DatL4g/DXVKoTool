@@ -19,15 +19,15 @@ import dev.datlag.dxvkotool.common.header
 import dev.datlag.dxvkotool.io.GameIO
 import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.other.StringRes
+import kotlinx.coroutines.flow.combine
 
 @Composable
 @Preview
 fun GameList() {
-    val coroutineScope = rememberCoroutineScope()
     val gamesWithOnlineItem by GameIO.allGamesFlow.collectAsState(emptyList())
-    gamesWithOnlineItem.onEach {
-        it.loadCacheInfo(coroutineScope)
-    }
+    combine(gamesWithOnlineItem.map { it.cacheInfoCollector }) {
+        it
+    }.collectAsState(arrayOf())
     val (steamGames, otherGames) = gamesWithOnlineItem.partition { it is Game.Steam }
 
     LazyVerticalGrid(

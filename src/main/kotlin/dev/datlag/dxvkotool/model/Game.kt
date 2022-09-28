@@ -18,11 +18,7 @@ sealed class Game(
 
     abstract val connectDBItems: Flow<Any>
 
-    fun loadCacheInfo(scope: CoroutineScope) = scope.launch(Dispatchers.IO) {
-        loadCacheInfo()
-    }
-
-    suspend fun loadCacheInfo() = coroutineScope {
+    val cacheInfoCollector by lazy {
         combine(
             OnlineDXVK.dxvkRepoStructureFlow,
             caches.flatMapLatest {
@@ -33,7 +29,7 @@ sealed class Game(
             connectDBItems
         ) { t1, t2, _ ->
             t1 to t2
-        }.distinctUntilChanged().collect { (repoStructures, _) ->
+        }.distinctUntilChanged().transform { (repoStructures, _) ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
             matchingCacheWithItem.forEach { (t, u) ->
                 val cacheInfo = if (u == null) {
@@ -46,6 +42,7 @@ sealed class Game(
                 }
                 t.info.emit(cacheInfo)
             }
+            emit(matchingCacheWithItem)
         }
     }
 
