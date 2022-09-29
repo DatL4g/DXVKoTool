@@ -35,7 +35,7 @@ sealed class Game(
             connectDBItems
         ) { t1, t2, _ ->
             t1 to t2
-        }.distinctUntilChanged().transform { (repoStructures, _) ->
+        }.transform { (repoStructures, _) ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
             matchingCacheWithItem.forEach { (t, u) ->
                 val cacheInfo = if (u == null) {
@@ -44,7 +44,8 @@ sealed class Game(
                     val downloadUrl = runCatching {
                         Constants.githubService.getStructureItemContent(u.url.replace(Constants.githubApiBaseUrl, String()))
                     }
-                    CacheInfo.Url(downloadUrl.getOrNull()?.getUrlInContent())
+                    val contentUrl = downloadUrl.getOrNull()?.getUrlInContent()
+                    CacheInfo.Url(contentUrl)
                 }
                 t.info.emit(cacheInfo)
             }
@@ -113,6 +114,8 @@ sealed class Game(
         override val path: File,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
     ) : Game(name, path, caches) {
-        override val connectDBItems: Flow<Unit> = flow { }
+        override val connectDBItems = flow {
+            emit(this.toString())
+        }
     }
 }

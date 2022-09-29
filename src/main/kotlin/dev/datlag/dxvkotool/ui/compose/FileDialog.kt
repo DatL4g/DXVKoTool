@@ -21,10 +21,10 @@ import javax.swing.filechooser.FileNameExtensionFilter
 @Composable
 fun SaveFileDialog(
     fileName: String,
-    parent: Frame? = null,
     onCloseRequest: (file: File?) -> Unit
 ) = AwtWindow(
     create = {
+        val parent: Frame? = null
         object : FileDialog(parent, StringRes.get().save, SAVE) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
@@ -62,10 +62,10 @@ fun SaveFileDialog(
 
 @Composable
 fun LoadFileDialog(
-    parent: Frame? = null,
-    onCloseRequest: (file: File?) -> Unit
+    onCloseRequest: (file: File?) -> Unit,
 ) = AwtWindow(
     create = {
+        val parent: Frame? = null
         object : FileDialog(parent, StringRes.get().load, LOAD) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
@@ -137,12 +137,15 @@ fun SaveJFileDialog(
 
 @Composable
 fun LoadJFileDialog(
+    acceptFolder: Boolean,
     onCloseRequest: (file: File?) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val fileChooser = JFileChooser(Constants.userDir)
-    fileChooser.fileSelectionMode = JFileChooser.FILES_ONLY
-    fileChooser.fileFilter = FileNameExtensionFilter("Game cache (.dxvk-cache)", "dxvk-cache")
+    fileChooser.fileSelectionMode = if (acceptFolder) JFileChooser.DIRECTORIES_ONLY else JFileChooser.FILES_ONLY
+    if (!acceptFolder) {
+        fileChooser.fileFilter = FileNameExtensionFilter("Game cache (.dxvk-cache)", "dxvk-cache")
+    }
     fileChooser.isFileHidingEnabled = false
 
     coroutineScope.launch(Dispatchers.IO) {
@@ -174,7 +177,7 @@ fun CombinedSaveFileDialog(
 ) {
     val desktop = systemEnv("XDG_CURRENT_DESKTOP") ?: String()
     if (desktop.equals(Constants.GNOME, true)) {
-        SaveFileDialog(fileName, null, onCloseRequest)
+        SaveFileDialog(fileName, onCloseRequest)
     } else {
         SaveJFileDialog(fileName, onCloseRequest)
     }
@@ -182,12 +185,13 @@ fun CombinedSaveFileDialog(
 
 @Composable
 fun CombinedLoadFileDialog(
+    acceptFolder: Boolean,
     onCloseRequest: (file: File?) -> Unit
 ) {
     val desktop = systemEnv("XDG_CURRENT_DESKTOP") ?: String()
-    if (desktop.equals(Constants.GNOME, true)) {
-        LoadFileDialog(null, onCloseRequest)
+    if (!acceptFolder && desktop.equals(Constants.GNOME, true)) {
+        LoadFileDialog(onCloseRequest)
     } else {
-        LoadJFileDialog(onCloseRequest)
+        LoadJFileDialog(acceptFolder, onCloseRequest)
     }
 }

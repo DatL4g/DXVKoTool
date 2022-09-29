@@ -40,7 +40,7 @@ fun CacheDropdownMenu(
     var isLoadLocalFileOpen by remember { mutableStateOf(false) }
 
     if (isLoadLocalFileOpen) {
-        CombinedLoadFileDialog { loadFile ->
+        CombinedLoadFileDialog(false) { loadFile ->
             isLoadLocalFileOpen = false
             if (loadFile != null) {
                 cache.loadLocalFile(coroutineScope, loadFile)

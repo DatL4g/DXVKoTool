@@ -1,6 +1,6 @@
 package dev.datlag.dxvkotool.io
 
-import dev.datlag.dxvkotool.dxvk.DxvkStateCache
+import dev.datlag.dxvkotool.common.isDirectorySafely
 import dev.datlag.dxvkotool.model.AppManifest
 import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.other.Constants
@@ -55,13 +55,13 @@ object SteamIO {
 
     val defaultShaderCacheFoldersFlow = flow<List<File>> {
         emit((File(Constants.userDir, Constants.STEAM_SHADER_DEFAULT_ROOT).listFiles() ?: emptyArray()).filter {
-            it.isDirectory
+            it.isDirectorySafely()
         })
     }.flowOn(Dispatchers.IO)
 
     val flatpakShaderCacheFoldersFlow = flow<List<File>> {
         emit((File(Constants.userDir, Constants.STEAM_SHADER_FLATPAK_ROOT).listFiles() ?: emptyArray()).filter {
-            it.isDirectory
+            it.isDirectorySafely()
         })
     }.flowOn(Dispatchers.IO)
 
@@ -100,7 +100,7 @@ object SteamIO {
         coroutineScope {
             allAssociations.map {
                 async(Dispatchers.IO) {
-                    val caches = getDxvkStateCaches(it.value)
+                    val caches = GameIO.getDxvkStateCaches(it.value)
                     if (caches.isEmpty()) {
                         null
                     } else {
@@ -114,16 +114,4 @@ object SteamIO {
             }.awaitAll().filterNotNull()
         }
     }.flowOn(Dispatchers.IO)
-
-    suspend fun getDxvkStateCaches(file: File): List<DxvkStateCache> = coroutineScope {
-        file.walkTopDown().map {
-            async(Dispatchers.IO) {
-                if (it.isFile && it.extension.equals("dxvk-cache", true)) {
-                    DxvkStateCache.fromFile(it).getOrNull()
-                } else {
-                    null
-                }
-            }
-        }.toList().awaitAll().filterNotNull()
-    }
 }

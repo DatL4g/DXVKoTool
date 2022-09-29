@@ -31,6 +31,7 @@ import androidx.compose.ui.configureSwingGlobalsForCompose
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import dev.datlag.dxvkotool.io.GameIO
 import dev.datlag.dxvkotool.io.SteamIO
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.StringRes
@@ -61,18 +62,27 @@ fun App() {
                 },
                 scaffoldState = scaffoldState,
                 floatingActionButton = {
-                    val snackbarHost = LocalSnackbarHost.current
                     val infoFile: MutableState<File?> = remember { mutableStateOf(null) }
                     val isInfoDialogOpen = remember { mutableStateOf(false) }
                     var isLoadDialogOpen by remember { mutableStateOf(false) }
+                    var isAddDialogOpen by remember { mutableStateOf(false) }
 
                     if (isLoadDialogOpen) {
-                        CombinedLoadFileDialog { loadFile ->
+                        CombinedLoadFileDialog(false) { loadFile ->
                             infoFile.value = loadFile
                             if (loadFile != null) {
                                 isInfoDialogOpen.value = true
                             }
                             isLoadDialogOpen = false
+                        }
+                    }
+
+                    if (isAddDialogOpen) {
+                        CombinedLoadFileDialog(true) { installPathFile ->
+                            if (installPathFile != null) coroutineScope.launch(Dispatchers.IO) {
+                                GameIO.addGameFromPath(installPathFile)
+                            }
+                            isAddDialogOpen = false
                         }
                     }
 
@@ -90,9 +100,7 @@ fun App() {
                         Spacer(modifier = Modifier.padding(4.dp))
                         FloatingActionButton(
                             onClick = {
-                                coroutineScope.launch(Dispatchers.IO) {
-                                    snackbarHost.showSnackbar("Adding your own games is not implemented yet")
-                                }
+                                isAddDialogOpen = true
                             },
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary

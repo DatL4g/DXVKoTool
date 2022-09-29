@@ -45,6 +45,8 @@ fun File.listFilesSafely(): List<File> {
 fun File.isFileSafely(): Boolean {
     return runCatching {
         this.isFile
+    }.getOrNull() ?: runCatching {
+        Files.isRegularFile(this.toPath())
     }.getOrNull() ?: false
 }
 
@@ -113,4 +115,12 @@ fun File.createBackup(): File {
         }
     }
     return backupFile
+}
+
+fun File.isDirectorySafely(): Boolean {
+    return runCatching {
+        this.isDirectory
+    }.getOrNull() ?: runCatching {
+        Files.isDirectory(this.toPath())
+    }.getOrNull() ?: false
 }

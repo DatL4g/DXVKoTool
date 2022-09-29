@@ -1,0 +1,31 @@
+CREATE TABLE OtherGame(
+    installPath TEXT NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE OtherGameCache(
+    gamePath TEXT NOT NULL,
+    cachePath TEXT NOT NULL PRIMARY KEY,
+    repoItem TEXT,
+    FOREIGN KEY (gamePath) REFERENCES OtherGame(installPath) ON DELETE CASCADE
+);
+
+selectGamesWithCaches:
+SELECT * FROM OtherGame INNER JOIN OtherGameCache ON OtherGame.installPath = OtherGameCache.gamePath OR OtherGame.installPath LIKE OtherGameCache.gamePath;
+
+insertGame:
+INSERT OR REPLACE INTO OtherGame(installPath)
+VALUES (?);
+
+insertGameObject:
+INSERT OR REPLACE INTO OtherGame(installPath)
+VALUES ?;
+
+insertGameCache:
+INSERT OR REPLACE INTO OtherGameCache(gamePath, cachePath, repoItem)
+VALUES (?, ?, ?);
+
+insertGameCacheObject:
+INSERT OR REPLACE INTO OtherGameCache(gamePath, cachePath, repoItem)
+VALUES (?, ?, ?);
+
+

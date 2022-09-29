@@ -11,11 +11,15 @@ data class RepoStructure(
     @SerialName("url") val url: String,
     @SerialName("tree") val tree: List<StructureItem>
 ) {
-    fun findMatchingGameItem(game: Game): Map<DxvkStateCache, StructureItem?> {
+    fun findMatchingGameItem(game: Game, ignoreSpaces: Boolean = false): Map<DxvkStateCache, StructureItem?> {
         val matchingItems = tree.mapNotNull { item ->
             val pathSplit = item.path.split('/')
             val anyMatching = pathSplit.any {
-                it.equals(game.name, true)
+                if (ignoreSpaces) {
+                    it.replace(" ", "").trim().equals(game.name.replace(" ", ""), true)
+                } else {
+                    it.equals(game.name, true)
+                }
             }
             if (anyMatching) {
                 item
@@ -132,6 +136,8 @@ data class StructureItemContent(
 
 fun Collection<RepoStructure>.findMatchingGameItem(game: Game): Map<DxvkStateCache, StructureItem?> {
     return game.caches.value.associateWith { cache ->
-        this.firstNotNullOfOrNull { it.findMatchingCacheItem(cache) } ?: this.firstNotNullOfOrNull { it.findMatchingGameItem(game)[cache] }
+        this.firstNotNullOfOrNull { it.findMatchingCacheItem(cache) }
+            ?: this.firstNotNullOfOrNull { it.findMatchingGameItem(game)[cache] }
+            ?: this.firstNotNullOfOrNull { it.findMatchingGameItem(game, true)[cache] }
     }
 }
