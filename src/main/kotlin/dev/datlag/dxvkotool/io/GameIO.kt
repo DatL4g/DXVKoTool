@@ -3,9 +3,11 @@ package dev.datlag.dxvkotool.io
 import dev.datlag.dxvkotool.common.existsSafely
 import dev.datlag.dxvkotool.common.isDirectorySafely
 import dev.datlag.dxvkotool.common.isFileSafely
+import dev.datlag.dxvkotool.common.listFrom
 import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.LegendaryGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -17,11 +19,8 @@ import java.io.File
 
 object GameIO {
 
-    val allGamesFlow: Flow<List<Game>> = combine(SteamIO.steamGamesFlow, DB.otherGames) { t1, t2 ->
-        mutableListOf<Game>().apply {
-            addAll(t1)
-            addAll(t2)
-        }
+    val allGamesFlow: Flow<List<Game>> = combine(SteamIO.steamGamesFlow, DB.otherGames, LegendaryIO.heroicFlatpakLegendaryGamesFlow) { t1, t2, _ ->
+        listFrom(t1, t2)
     }.flowOn(Dispatchers.IO)
 
     suspend fun getDxvkStateCaches(file: File): List<DxvkStateCache> = withContext(Dispatchers.IO) {
@@ -36,9 +35,36 @@ object GameIO {
         }.toList().awaitAll().filterNotNull()
     }
 
-    suspend fun addGameFromPath(file: File) {
+    suspend fun addGameFromPath(file: File) = withContext(Dispatchers.IO) {
+        addGame(
+            file,
+            file.name,
+            false
+        )
+    }
+
+    suspend fun addLegendaryGame(legendaryGame: LegendaryGame) = withContext(Dispatchers.IO) {
+        val gamePath = File(legendaryGame.installPath)
+        addGame(
+            gamePath,
+            legendaryGame.title.ifEmpty {
+                gamePath.name
+            },
+            true
+        )
+    }
+
+    private suspend fun addGame(
+        file: File,
+        name: String,
+        isEpic: Boolean
+    ) {
         if (file.existsSafely() && file.isDirectorySafely()) {
-            DB.database.otherGameQueries.insertGame(file.absolutePath)
+            DB.database.otherGameQueries.insertGame(
+                file.absolutePath,
+                name,
+                isEpic
+            )
             getDxvkStateCaches(file).forEach { cache ->
                 DB.database.otherGameQueries.insertGameCache(file.absolutePath, cache.file.absolutePath, null)
             }

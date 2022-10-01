@@ -1,6 +1,7 @@
 package dev.datlag.dxvkotool.io
 
 import dev.datlag.dxvkotool.common.isDirectorySafely
+import dev.datlag.dxvkotool.common.listFrom
 import dev.datlag.dxvkotool.model.AppManifest
 import dev.datlag.dxvkotool.model.Game
 import dev.datlag.dxvkotool.other.Constants
@@ -37,10 +38,7 @@ object SteamIO {
     val flatpakAcfFlow: MutableStateFlow<List<File>> = MutableStateFlow(emptyList())
 
     val acfFlow = combine(defaultAcfFlow, flatpakAcfFlow) { t1, t2 ->
-        mutableSetOf<File>().apply {
-            addAll(t1)
-            addAll(t2)
-        }.toList()
+        listFrom(t1, t2)
     }.flowOn(Dispatchers.IO)
 
     val appManifestFlow: Flow<List<AppManifest>> = acfFlow.transform { acfFiles ->
@@ -66,10 +64,7 @@ object SteamIO {
     }.flowOn(Dispatchers.IO)
 
     val shaderCacheFoldersFlow = combine(defaultShaderCacheFoldersFlow, flatpakShaderCacheFoldersFlow) { t1, t2 ->
-        mutableSetOf<File>().apply {
-            addAll(t1)
-            addAll(t2)
-        }.toList()
+        listFrom(t1, t2)
     }.flowOn(Dispatchers.IO)
 
     val steamGamesFlow = combine(appManifestFlow, shaderCacheFoldersFlow) { t1, t2 ->

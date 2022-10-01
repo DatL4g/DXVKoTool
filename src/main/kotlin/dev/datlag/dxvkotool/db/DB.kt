@@ -48,8 +48,9 @@ object DB {
                 val cache = DxvkStateCache.fromFile(File(game.cachePath)).getOrNull()
                 cache?.associatedRepoItem?.emit(game.repoItem)
                 val newGame = Game.Other(
-                    gamePath.name,
+                    game.name,
                     gamePath,
+                    game.isEpic,
                     MutableStateFlow(listOfNotNull(cache))
                 )
                 gameList.add(newGame)

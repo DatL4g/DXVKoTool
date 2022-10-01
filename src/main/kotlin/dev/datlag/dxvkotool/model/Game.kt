@@ -112,6 +112,7 @@ sealed class Game(
     data class Other(
         override val name: String,
         override val path: File,
+        val isEpicGame: Boolean,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
     ) : Game(name, path, caches) {
         override val connectDBItems = flow {

@@ -6,28 +6,26 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import dev.datlag.dxvkotool.common.header
 import dev.datlag.dxvkotool.io.GameIO
 import dev.datlag.dxvkotool.model.Game
-import dev.datlag.dxvkotool.other.StringRes
 import kotlinx.coroutines.flow.combine
 
 @Composable
 @Preview
-fun GameList() {
+fun GameList(
+    selectedGameTypeIndex: MutableState<Int>
+) {
     val gamesWithOnlineItem by GameIO.allGamesFlow.collectAsState(emptyList())
     combine(gamesWithOnlineItem.map { it.cacheInfoCollector }) {
         it
     }.collectAsState(arrayOf())
-    val (steamGames, otherGames) = gamesWithOnlineItem.partition { it is Game.Steam }
+    val (steamGames, otherGamesFlat) = gamesWithOnlineItem.partition { it is Game.Steam }
+    val (epicGames, otherGames) = otherGamesFlat.partition { (it as? Game.Other?)?.isEpicGame == true }
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 500.dp),
@@ -35,28 +33,16 @@ fun GameList() {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        header {
-            Text(
-                text = StringRes.get().steamGames,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        items(steamGames) {
-            GameCard(it)
-        }
-
-        header {
-            Text(
-                text = StringRes.get().otherGames,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        items(otherGames) {
-            GameCard(it)
+        when (selectedGameTypeIndex.value) {
+            0 -> items(steamGames) {
+                GameCard(it)
+            }
+            1 -> items(epicGames) {
+                GameCard(it)
+            }
+            2 -> items(otherGames) {
+                GameCard(it)
+            }
         }
     }
 }

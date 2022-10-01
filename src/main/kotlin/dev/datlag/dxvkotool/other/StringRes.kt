@@ -10,6 +10,7 @@ interface AppStringRes {
     val merge: String
     val restoreBackup: String
     val steamGames: String
+    val epicGames: String
     val otherGames: String
     val loading: String
     val noneFound: String
@@ -71,6 +72,7 @@ object StringRes {
         override val restoreBackup: String = "Restore Backup"
         override val steamGames: String = "Steam Games"
         override val otherGames: String = "Other Games"
+        override val epicGames: String = "Epic Games"
 
         override val loading: String = "Loading"
         override val noneFound: String = "None Found"

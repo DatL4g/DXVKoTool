@@ -1,5 +1,7 @@
 CREATE TABLE OtherGame(
-    installPath TEXT NOT NULL PRIMARY KEY
+    installPath TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    isEpic INTEGER AS Boolean NOT NULL
 );
 
 CREATE TABLE OtherGameCache(
@@ -13,11 +15,11 @@ selectGamesWithCaches:
 SELECT * FROM OtherGame INNER JOIN OtherGameCache ON OtherGame.installPath = OtherGameCache.gamePath OR OtherGame.installPath LIKE OtherGameCache.gamePath;
 
 insertGame:
-INSERT OR REPLACE INTO OtherGame(installPath)
-VALUES (?);
+INSERT OR IGNORE INTO OtherGame(installPath, name, isEpic)
+VALUES (?, ?, ?);
 
 insertGameObject:
-INSERT OR REPLACE INTO OtherGame(installPath)
+INSERT OR IGNORE INTO OtherGame(installPath, name, isEpic)
 VALUES ?;
 
 insertGameCache:

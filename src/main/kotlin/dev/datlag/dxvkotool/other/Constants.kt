@@ -14,8 +14,8 @@ import org.apache.tika.Tika
 import java.time.format.DateTimeFormatter
 
 object Constants {
-    const val STEAM_DEFAULT_ROOT = "/.steam/steam/steamapps/"
-    const val STEAM_FLATPAK_ROOT = "/.var/app/com.valvesoftware.Steam/.steam/steam/steamapps/"
+    const val STEAM_DEFAULT_ROOT = ".steam/steam/steamapps/"
+    const val STEAM_FLATPAK_ROOT = ".var/app/com.valvesoftware.Steam/.steam/steam/steamapps/"
 
     const val STEAM_SHADER_DEFAULT_ROOT = "$STEAM_DEFAULT_ROOT/shadercache/"
     const val STEAM_SHADER_FLATPAK_ROOT = "$STEAM_FLATPAK_ROOT/shadercache/"
@@ -23,6 +23,9 @@ object Constants {
     const val ACF_ALL_ENDING_WITH_COMMA = "\"\\S+\"\\s+\"(\\S|[ ])+\"(?!(\\s+)?})"
     const val ACF_ALL_ENDING_WITH_COLON = "\"(\\S|[ ])+\"(?!([,]|\\s+(}|])))"
     const val ACF_ALL_ENDING_WITH_PARENTHESIS = "(}|])(?!([,]|\\s+(}|])))"
+
+    const val SYSTEM_DEFAULT_LEGENDARY = ".config/legendary/"
+    const val HEROIC_FLATPAK_LEGENDARY = ".var/app/com.heroicgameslauncher.hgl/config/legendary/"
 
     const val githubApiBaseUrl = "https://api.github.com/"
 
