@@ -32,6 +32,11 @@ object Constants {
     const val githubProjectLink = "https://github.com/DATL4G/DXVKoTool"
     const val githubSponsorLink = "https://github.com/sponsors/DATL4G"
 
+    const val dxvkRepoOwner = "begin-theadventure"
+    const val dxvkRepo = "dxvk-caches"
+    const val dxvkRepoBranch = "main"
+    const val dxvkRepoProjectLink = "https://github.com/$dxvkRepoOwner/$dxvkRepo"
+
     const val GNOME = "GNOME"
     val tikaCore = Tika()
 

@@ -24,9 +24,9 @@ object OnlineDXVK {
 
     private val repoMap: Set<RepoInfo> = setOf(
         RepoInfo(
-            "begin-theadventure",
-            "dxvk-caches",
-            "main"
+            Constants.dxvkRepoOwner,
+            Constants.dxvkRepo,
+            Constants.dxvkRepoBranch
         )
     )
 

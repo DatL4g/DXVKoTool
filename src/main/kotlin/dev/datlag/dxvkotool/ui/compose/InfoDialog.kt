@@ -75,6 +75,21 @@ fun InfoDialog(isDialogOpen: MutableState<Boolean>) {
                             }
                         )
                     }
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    Row {
+                        Text(
+                            text = StringRes.get().dxvkRepoPlaceholder.format(String())
+                        )
+                        Text(
+                            text = Constants.dxvkRepo,
+                            textDecoration = TextDecoration.Underline,
+                            color = Color.Blue,
+                            modifier = Modifier.onClick {
+                                val openProjectResult = Constants.dxvkRepoProjectLink.openInBrowser()
+                                snackbarHost.showFromResult(coroutineScope, openProjectResult, String())
+                            }
+                        )
+                    }
                 }
             },
             dismissButton = {

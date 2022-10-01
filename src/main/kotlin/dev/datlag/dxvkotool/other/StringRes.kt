@@ -44,6 +44,7 @@ interface AppStringRes {
     val unsupportedSystem: String
 
     val githubPlaceholder: String
+    val dxvkRepoPlaceholder: String
     val cacheInformation: String
 
     val detecting: String
@@ -108,6 +109,7 @@ object StringRes {
         override val unsupportedSystem: String = "Unsupported system"
 
         override val githubPlaceholder: String = "GitHub: %s"
+        override val dxvkRepoPlaceholder: String = "DXVK Repository: %s"
         override val cacheInformation: String = "Cache Information"
 
         override val detecting: String = "Detecting"
