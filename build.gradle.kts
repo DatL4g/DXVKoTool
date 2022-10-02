@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.10"
-    id("org.jetbrains.compose") version "1.2.0-beta01"
+    id("org.jetbrains.compose") version "1.2.0-beta02"
     kotlin("plugin.serialization") version "1.7.10"
     id("com.google.devtools.ksp") version "1.7.10-1.0.6"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.squareup.sqldelight") version "1.5.3"
 }
 
-val appVersion = "0.2.0"
+val appVersion = "0.3.0"
 
 group = "dev.datlag"
 version = appVersion
@@ -22,14 +22,15 @@ repositories {
 }
 
 val ktorfitVersion = "1.0.0-beta14"
-val ktorVersion = "2.1.1"
+val ktorVersion = "2.1.2"
+val composeVersion = "1.2.0-beta02"
 
 dependencies {
-    implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:1.2.0-beta01")
+    implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:$composeVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-    implementation("org.jetbrains.compose.material3:material3:1.2.0-beta01")
-    implementation("org.jetbrains.compose.material:material-icons-extended:1.2.0-beta01")
+    implementation("org.jetbrains.compose.material3:material3:$composeVersion")
+    implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
@@ -46,13 +47,6 @@ dependencies {
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")
 
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("androidx.compose.material3:material3:1.0.0-beta01")
-        force("androidx.compose.material:material:1.3.0-beta01")
-    }
 }
 
 tasks.withType<KotlinCompile> {
@@ -72,7 +66,7 @@ compose.desktop {
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
 
-            modules("java.instrument", "java.management", "java.prefs", "java.sql", "jdk.unsupported")
+            modules("java.instrument", "java.management", "java.naming", "java.prefs", "java.sql", "jdk.unsupported")
         }
     }
 }
