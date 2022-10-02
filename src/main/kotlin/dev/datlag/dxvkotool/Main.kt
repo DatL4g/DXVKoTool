@@ -26,18 +26,21 @@ import dev.datlag.dxvkotool.ui.compose.FABContainer
 import dev.datlag.dxvkotool.ui.compose.GameList
 import dev.datlag.dxvkotool.ui.compose.ToolBar
 import dev.datlag.dxvkotool.ui.theme.AppTheme
-import androidx.compose.ui.res.useResource
-import javax.swing.ImageIcon
+import androidx.compose.ui.window.FrameWindowScope
+import dev.datlag.dxvkotool.io.AppIO
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    frameWindow: FrameWindowScope
+) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val selectedGameTypeIndex = remember { mutableStateOf(0) }
 
+    AppIO.loadAppIcon(frameWindow.window, coroutineScope)
     SteamIO.reload(coroutineScope)
     OnlineDXVK.getDXVKCaches(coroutineScope)
     LegendaryIO.reload(coroutineScope)
@@ -69,14 +72,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = StringRes.get().name
     ) {
-        this.window.iconImages = listOf(
-            useResource("AppIcon20.png") { ImageIcon(it.readAllBytes()).image },
-            useResource("AppIcon32.png") { ImageIcon(it.readAllBytes()).image },
-            useResource("AppIcon36.png") { ImageIcon(it.readAllBytes()).image },
-            useResource("AppIcon48.png") { ImageIcon(it.readAllBytes()).image },
-            useResource("AppIcon64.png") { ImageIcon(it.readAllBytes()).image },
-            useResource("AppIcon128.png") { ImageIcon(it.readAllBytes()).image },
-        )
-        App()
+        App(this)
     }
 }

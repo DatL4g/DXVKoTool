@@ -26,7 +26,7 @@ val ktorVersion = "2.1.2"
 val composeVersion = "1.2.0-beta02"
 
 dependencies {
-    implementation("org.jetbrains.compose.desktop:desktop-jvm-linux-x64:$composeVersion")
+    implementation(compose.desktop.currentOs)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation("org.jetbrains.compose.material3:material3:$composeVersion")
