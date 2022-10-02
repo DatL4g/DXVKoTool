@@ -59,6 +59,10 @@ interface AppStringRes {
     val backupDate: String
     val restoreBackupTitlePlaceholder: String
     val restoreSuccessful: String
+
+    val loadLocalDxvkCacheFile: String
+    val mergeLocalDxvkCacheFile: String
+    val selectGameFolder: String
 }
 
 object StringRes {
@@ -124,6 +128,10 @@ object StringRes {
         override val backupDate: String = "Backup Date (ISO)"
         override val restoreBackupTitlePlaceholder: String = "Restore %s backup"
         override val restoreSuccessful: String = "Restore backup successful"
+
+        override val loadLocalDxvkCacheFile: String = "Load local dxvk-cache file"
+        override val mergeLocalDxvkCacheFile: String = "Merge local dxvk-cache file"
+        override val selectGameFolder: String = "Select Game folder"
     }
 
     fun get() = en

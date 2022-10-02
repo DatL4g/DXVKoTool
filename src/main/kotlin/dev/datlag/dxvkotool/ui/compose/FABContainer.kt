@@ -33,7 +33,7 @@ fun FABContainer() {
     var isAddDialogOpen by remember { mutableStateOf(false) }
 
     if (isLoadDialogOpen) {
-        CombinedLoadFileDialog(false) { loadFile ->
+        CombinedLoadFileDialog(StringRes.get().loadLocalDxvkCacheFile, false) { loadFile ->
             infoFile.value = loadFile
             if (loadFile != null) {
                 isInfoDialogOpen.value = true
@@ -43,7 +43,7 @@ fun FABContainer() {
     }
 
     if (isAddDialogOpen) {
-        CombinedLoadFileDialog(true) { installPathFile ->
+        CombinedLoadFileDialog(StringRes.get().selectGameFolder, true) { installPathFile ->
             if (installPathFile != null) coroutineScope.launch(Dispatchers.IO) {
                 GameIO.addGameFromPath(installPathFile)
             }

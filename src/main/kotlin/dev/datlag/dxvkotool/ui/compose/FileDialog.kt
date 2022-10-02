@@ -62,6 +62,7 @@ fun SaveFileDialog(
 
 @Composable
 fun LoadFileDialog(
+    title: String,
     onCloseRequest: (file: File?) -> Unit,
 ) = AwtWindow(
     create = {
@@ -87,6 +88,7 @@ fun LoadFileDialog(
             setFilenameFilter { _, name ->
                 name.endsWith(".dxvk-cache", true)
             }
+            this.title = title
         }
     },
     dispose = FileDialog::dispose,
@@ -137,6 +139,7 @@ fun SaveJFileDialog(
 
 @Composable
 fun LoadJFileDialog(
+    title: String,
     acceptFolder: Boolean,
     onCloseRequest: (file: File?) -> Unit
 ) {
@@ -147,6 +150,7 @@ fun LoadJFileDialog(
         fileChooser.fileFilter = FileNameExtensionFilter("Game cache (.dxvk-cache)", "dxvk-cache")
     }
     fileChooser.isFileHidingEnabled = false
+    fileChooser.dialogTitle = title
 
     coroutineScope.launch(Dispatchers.IO) {
         val option = fileChooser.showOpenDialog(null)
@@ -185,13 +189,14 @@ fun CombinedSaveFileDialog(
 
 @Composable
 fun CombinedLoadFileDialog(
+    title: String,
     acceptFolder: Boolean,
     onCloseRequest: (file: File?) -> Unit
 ) {
     val desktop = systemEnv("XDG_CURRENT_DESKTOP") ?: String()
     if (!acceptFolder && desktop.equals(Constants.GNOME, true)) {
-        LoadFileDialog(onCloseRequest)
+        LoadFileDialog(title, onCloseRequest)
     } else {
-        LoadJFileDialog(acceptFolder, onCloseRequest)
+        LoadJFileDialog(title, acceptFolder, onCloseRequest)
     }
 }
