@@ -27,7 +27,7 @@ import dev.datlag.dxvkotool.model.Game
 fun GameCard(game: Game) {
     val caches by game.caches.collectAsState()
 
-    ElevatedCard(modifier = Modifier.fillMaxSize().fillMaxHeight()) {
+    ElevatedCard(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             game,
             modifier = Modifier.fillMaxWidth()
