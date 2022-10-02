@@ -15,9 +15,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.configureSwingGlobalsForCompose
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import dev.datlag.dxvkotool.io.LegendaryIO
@@ -28,6 +26,8 @@ import dev.datlag.dxvkotool.ui.compose.FABContainer
 import dev.datlag.dxvkotool.ui.compose.GameList
 import dev.datlag.dxvkotool.ui.compose.ToolBar
 import dev.datlag.dxvkotool.ui.theme.AppTheme
+import androidx.compose.ui.res.useResource
+import javax.swing.ImageIcon
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
@@ -69,6 +69,14 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = StringRes.get().name
     ) {
+        this.window.iconImages = listOf(
+            useResource("AppIcon20.png") { ImageIcon(it.readAllBytes()).image },
+            useResource("AppIcon32.png") { ImageIcon(it.readAllBytes()).image },
+            useResource("AppIcon36.png") { ImageIcon(it.readAllBytes()).image },
+            useResource("AppIcon48.png") { ImageIcon(it.readAllBytes()).image },
+            useResource("AppIcon64.png") { ImageIcon(it.readAllBytes()).image },
+            useResource("AppIcon128.png") { ImageIcon(it.readAllBytes()).image },
+        )
         App()
     }
 }

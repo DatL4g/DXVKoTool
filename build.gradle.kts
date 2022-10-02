@@ -66,6 +66,10 @@ compose.desktop {
             copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
             licenseFile.set(project.file("LICENSE"))
 
+            linux {
+                iconFile.set(project.file("./src/main/resources/AppIcon128.png"))
+            }
+
             modules("java.instrument", "java.management", "java.naming", "java.prefs", "java.sql", "jdk.unsupported")
         }
     }
