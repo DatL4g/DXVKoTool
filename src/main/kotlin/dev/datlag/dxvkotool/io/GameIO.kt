@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
@@ -23,6 +24,11 @@ object GameIO {
 
     val allGamesFlow: Flow<List<Game>> = combine(SteamIO.steamGamesFlow, DB.otherGames, LegendaryIO.heroicFlatpakLegendaryGamesFlow) { t1, t2, _ ->
         listFrom(t1, t2)
+    }.transform {
+        emit(it)
+        combine(it.map { game -> game.cacheInfoCollector }) { list ->
+            list
+        }.collect()
     }.flowOn(Dispatchers.IO)
 
     val allGamesPartitioned: Flow<GamePartition> = allGamesFlow.transform { list ->
