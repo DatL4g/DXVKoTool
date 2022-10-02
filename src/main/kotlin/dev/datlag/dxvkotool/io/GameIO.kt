@@ -7,6 +7,7 @@ import dev.datlag.dxvkotool.common.listFrom
 import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.GamePartition
 import dev.datlag.dxvkotool.model.LegendaryGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -14,6 +15,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -21,6 +23,18 @@ object GameIO {
 
     val allGamesFlow: Flow<List<Game>> = combine(SteamIO.steamGamesFlow, DB.otherGames, LegendaryIO.heroicFlatpakLegendaryGamesFlow) { t1, t2, _ ->
         listFrom(t1, t2)
+    }.flowOn(Dispatchers.IO)
+
+    val allGamesPartitioned: Flow<GamePartition> = allGamesFlow.transform { list ->
+        val (steamGames, otherGamesFlat) = list.partition { it is Game.Steam }
+        val (epicGames, otherGames) = otherGamesFlat.partition { (it as? Game.Other?)?.isEpicGame == true }
+        emit(
+            GamePartition(
+                steamGames,
+                epicGames,
+                otherGames
+            )
+        )
     }.flowOn(Dispatchers.IO)
 
     suspend fun getDxvkStateCaches(file: File): List<DxvkStateCache> = withContext(Dispatchers.IO) {

@@ -9,8 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
@@ -34,12 +32,12 @@ object LegendaryIO {
         heroicFlatpakLegendaryGamesFlow.emit(getHeroicFlatpakLegendaryInstalled())
     }
 
-    fun addGamesToDB(scope: CoroutineScope) {
-        legendaryGamesFlow.onEach { list ->
+    fun addGamesToDB(scope: CoroutineScope) = scope.launch(Dispatchers.IO) {
+        legendaryGamesFlow.collect { list ->
             list.forEach {
                 GameIO.addLegendaryGame(it)
             }
-        }.launchIn(scope)
+        }
     }
 
     private val systemLegendaryDir = File(Constants.userDir, Constants.SYSTEM_DEFAULT_LEGENDARY)

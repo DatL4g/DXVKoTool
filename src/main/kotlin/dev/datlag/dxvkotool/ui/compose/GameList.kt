@@ -12,7 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import dev.datlag.dxvkotool.io.GameIO
-import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.GamePartition
 import kotlinx.coroutines.flow.combine
 
 @Composable
@@ -23,9 +23,12 @@ fun GameList(
     val gamesWithOnlineItem by GameIO.allGamesFlow.collectAsState(emptyList())
     combine(gamesWithOnlineItem.map { it.cacheInfoCollector }) {
         it
-    }.collectAsState(arrayOf())
-    val (steamGames, otherGamesFlat) = gamesWithOnlineItem.partition { it is Game.Steam }
-    val (epicGames, otherGames) = otherGamesFlat.partition { (it as? Game.Other?)?.isEpicGame == true }
+    }.collectAsState(emptyArray())
+    val gamePartition by GameIO.allGamesPartitioned.collectAsState(GamePartition(
+        emptyList(),
+        emptyList(),
+        emptyList()
+    ))
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 500.dp),
@@ -34,13 +37,13 @@ fun GameList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         when (selectedGameTypeIndex.value) {
-            0 -> items(steamGames) {
+            0 -> items(gamePartition.steamGames) {
                 GameCard(it)
             }
-            1 -> items(epicGames) {
+            1 -> items(gamePartition.epicGames) {
                 GameCard(it)
             }
-            2 -> items(otherGames) {
+            2 -> items(gamePartition.otherGames) {
                 GameCard(it)
             }
         }

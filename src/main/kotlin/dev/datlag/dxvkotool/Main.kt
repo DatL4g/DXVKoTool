@@ -37,10 +37,6 @@ fun App() {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val selectedGameTypeIndex = remember { mutableStateOf(0) }
-    SteamIO.reload(coroutineScope)
-    OnlineDXVK.getDXVKCaches(coroutineScope)
-    LegendaryIO.reload(coroutineScope)
-    LegendaryIO.addGamesToDB(coroutineScope)
 
     CompositionLocalProvider(LocalSnackbarHost provides scaffoldState.snackbarHostState) {
         AppTheme {
@@ -53,6 +49,11 @@ fun App() {
                     FABContainer()
                 }
             ) {
+                SteamIO.reload(coroutineScope)
+                OnlineDXVK.getDXVKCaches(coroutineScope)
+                LegendaryIO.reload(coroutineScope)
+                LegendaryIO.addGamesToDB(coroutineScope)
+
                 Column(
                     modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
                 ) {
