@@ -3,7 +3,6 @@ package dev.datlag.dxvkotool.ui.compose
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +24,7 @@ import dev.datlag.dxvkotool.model.Game
 @Composable
 @Preview
 fun GameCard(game: Game) {
-    val caches by game.caches.collectAsState()
+    val caches by game.cacheInfoCollector.collectAsState(emptySet())
 
     ElevatedCard(modifier = Modifier.fillMaxSize()) {
         AsyncImage(

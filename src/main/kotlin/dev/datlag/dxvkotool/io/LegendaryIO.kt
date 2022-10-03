@@ -20,8 +20,8 @@ import java.io.File
 
 object LegendaryIO {
 
-    val systemLegendaryGamesFlow: MutableStateFlow<List<LegendaryGame>> = MutableStateFlow(emptyList())
-    val heroicFlatpakLegendaryGamesFlow: MutableStateFlow<List<LegendaryGame>> = MutableStateFlow(emptyList())
+    private val systemLegendaryGamesFlow: MutableStateFlow<List<LegendaryGame>> = MutableStateFlow(emptyList())
+    private val heroicFlatpakLegendaryGamesFlow: MutableStateFlow<List<LegendaryGame>> = MutableStateFlow(emptyList())
 
     val legendaryGamesFlow = combine(systemLegendaryGamesFlow, heroicFlatpakLegendaryGamesFlow) { t1, t2 ->
         listFrom(t1, t2)

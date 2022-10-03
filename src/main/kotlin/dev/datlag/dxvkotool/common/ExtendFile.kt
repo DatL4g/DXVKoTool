@@ -4,6 +4,7 @@ import java.io.File
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
 import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 import kotlin.math.max
@@ -123,4 +124,48 @@ fun File.isDirectorySafely(): Boolean {
     }.getOrNull() ?: runCatching {
         Files.isDirectory(this.toPath())
     }.getOrNull() ?: false
+}
+
+fun File.isSymlinkSafely(): Boolean {
+    return runCatching {
+        Files.isSymbolicLink(this.toPath())
+    }.getOrNull() ?: runCatching {
+        !Files.isRegularFile(this.toPath(), LinkOption.NOFOLLOW_LINKS)
+    }.getOrNull() ?: false
+}
+
+fun File.getRealFile(): File {
+    return if (isSymlinkSafely()) runCatching {
+        Files.readSymbolicLink(this.toPath()).toFile()
+    }.getOrNull() ?: this else this
+}
+
+fun File.isSame(file: File?): Boolean {
+    return if (file == null) {
+        false
+    } else {
+        this == file || runCatching {
+            this.absoluteFile == file.absoluteFile || Files.isSameFile(this.toPath(), file.toPath())
+        }.getOrNull() ?: false
+    }
+}
+
+fun Collection<File>.normalize(mustExist: Boolean = true): List<File> {
+    val list: MutableList<File> = mutableListOf()
+    this.forEach { file ->
+        var realFile = file.getRealFile()
+        if (mustExist) {
+            if (!realFile.existsSafely()) {
+                if (file.existsSafely()) {
+                    realFile = file
+                } else {
+                    return@forEach
+                }
+            }
+        }
+        if (list.firstOrNull { it.isSame(realFile) } == null) {
+            list.add(realFile)
+        }
+    }
+    return list
 }

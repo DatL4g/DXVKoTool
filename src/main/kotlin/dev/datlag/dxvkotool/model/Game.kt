@@ -49,7 +49,7 @@ sealed class Game(
                 }
                 t.info.emit(cacheInfo)
             }
-            emit(matchingCacheWithItem)
+            return@transform emit(matchingCacheWithItem.keys)
         }
     }
 

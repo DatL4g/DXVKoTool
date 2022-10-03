@@ -13,6 +13,7 @@ import dev.datlag.sqldelight.db.SteamGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import java.io.File
 
@@ -57,7 +58,7 @@ object DB {
             }
         }
 
-        emit(gameList.toList())
-    }
+        return@transform emit(gameList.toList())
+    }.flowOn(Dispatchers.IO)
 
 }
