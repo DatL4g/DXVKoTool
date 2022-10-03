@@ -6,9 +6,7 @@ The DXVKoTool extracts DXVK caches of games automatically and can update them wi
 
 ## ⚠ WARNING!!!
 
-This tool is in a very early state.
-
-Additionally it's my first time working with compose 😬.
+This tool is in beta state right now.
 
 **Current functionality:**
 
@@ -19,16 +17,15 @@ Additionally it's my first time working with compose 😬.
 - Merge with found and downloaded caches
   - Creates backup file (no worries)
   - Check entry size difference on downloaded files
-    - only mergable if more entries available
+    - only merge if more entries available
 - Update entry size text after merge
 - WIP: Show more information in Snackbar on actions
 - WIP: Information dialog
+- WIP: Add other games (non-Steam games)
+- WIP: Auto-Add Epic Games
   
 **Planned functionality:**
 
-- Add other games on your own
-  - not Steam games only
-- Don't show ```None found``` during first availability check
 - Package a single AppImage
   - not the whole directory
   - HELP WANTED
