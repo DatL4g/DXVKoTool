@@ -11,15 +11,22 @@ data class RepoStructure(
     @SerialName("url") val url: String,
     @SerialName("tree") val tree: List<StructureItem>
 ) {
-    fun findMatchingGameItem(game: Game, ignoreSpaces: Boolean = false): Map<DxvkStateCache, StructureItem?> {
+    fun findMatchingGameItem(game: Game, ignoreSpaces: Boolean = false, ignoreSpecialChars: Boolean = false): Map<DxvkStateCache, StructureItem?> {
         val matchingItems = tree.mapNotNull { item ->
             val pathSplit = item.path.split('/')
             val anyMatching = pathSplit.any {
-                if (ignoreSpaces) {
-                    it.replace(" ", "").trim().equals(game.name.replace(" ", ""), true)
-                } else {
-                    it.equals(game.name, true)
+                var gameString = game.name
+                var compareString = it
+                if (ignoreSpecialChars) {
+                    val regex = "([A-Za-z0-9]|\\s)+".toRegex()
+                    gameString = regex.find(gameString)?.value ?: gameString
+                    compareString = regex.find(compareString)?.value ?: compareString
                 }
+                if (ignoreSpaces) {
+                    gameString = gameString.replace("\\s+".toRegex(), "")
+                    compareString = compareString.replace("\\s+".toRegex(), "")
+                }
+                gameString.equals(compareString, true)
             }
             if (anyMatching) {
                 item
@@ -138,6 +145,26 @@ fun Collection<RepoStructure>.findMatchingGameItem(game: Game): Map<DxvkStateCac
     return game.caches.value.associateWith { cache ->
         this.firstNotNullOfOrNull { it.findMatchingCacheItem(cache) }
             ?: this.firstNotNullOfOrNull { it.findMatchingGameItem(game)[cache] }
-            ?: this.firstNotNullOfOrNull { it.findMatchingGameItem(game, true)[cache] }
+            ?: this.firstNotNullOfOrNull {
+                it.findMatchingGameItem(
+                    game = game,
+                    ignoreSpaces = true,
+                    ignoreSpecialChars = false
+                )[cache]
+            }
+            ?: this.firstNotNullOfOrNull {
+                it.findMatchingGameItem(
+                    game = game,
+                    ignoreSpaces = false,
+                    ignoreSpecialChars = true
+                )[cache]
+            }
+            ?: this.firstNotNullOfOrNull {
+                it.findMatchingGameItem(
+                    game = game,
+                    ignoreSpaces = true,
+                    ignoreSpecialChars = true
+                )[cache]
+            }
     }
 }
