@@ -24,7 +24,7 @@ jobs:
 
       - name: Execute packaging on Ubuntu
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew packageDeb
+        run: ./gradlew packageDeb; ./gradlew packageAppImage && cd ./build/release/main/app/ && tar cJf DXVKoTool.tar.xz DXVKoTool
 
       - name: Execute packaging on Windows
         if: matrix.os == 'windows-latest'
@@ -34,5 +34,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            ./build/release/main/app/DXVKoTool.tar.xz
             ./build/release/main/deb/*.deb
             ./build/release/main/exe/*.exe
