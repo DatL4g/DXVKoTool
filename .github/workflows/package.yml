@@ -3,6 +3,7 @@ name: Build release packages
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   package:
