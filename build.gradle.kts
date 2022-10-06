@@ -78,6 +78,12 @@ compose.desktop {
                 iconFile.set(project.file("./src/main/resources/AppIcon128.png"))
                 rpmLicenseType = "GPL-3.0"
             }
+            windows {
+                iconFile.set(project.file("./src/main/resources/AppIcon128.ico"))
+            }
+            macOS {
+                iconFile.set(project.file("./src/main/resources/AppIcon.icns"))
+            }
 
             modules("java.instrument", "java.management", "java.naming", "java.prefs", "java.sql", "jdk.unsupported")
         }
