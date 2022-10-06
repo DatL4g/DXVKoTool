@@ -3,7 +3,7 @@ package dev.datlag.dxvkotool.io
 import dev.datlag.dxvkotool.common.download
 import dev.datlag.dxvkotool.common.runSuspendCatching
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
-import dev.datlag.dxvkotool.model.CacheInfo
+import dev.datlag.dxvkotool.model.game.cache.CacheInfo
 import dev.datlag.dxvkotool.other.Constants
 import org.rauschig.jarchivelib.ArchiveFormat
 import org.rauschig.jarchivelib.ArchiverFactory

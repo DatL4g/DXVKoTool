@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.game.cache.dropdown
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -23,8 +23,9 @@ import dev.datlag.dxvkotool.LocalSnackbarHost
 import dev.datlag.dxvkotool.common.showFromResult
 import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
-import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.game.Game
 import dev.datlag.dxvkotool.other.StringRes
+import dev.datlag.dxvkotool.ui.compose.CombinedLoadFileDialog
 import java.awt.Desktop
 
 @Composable

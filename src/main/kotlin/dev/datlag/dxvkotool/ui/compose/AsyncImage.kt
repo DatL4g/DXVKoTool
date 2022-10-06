@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.game.Game
 import dev.datlag.dxvkotool.network.OnlineSteam
 
 @Composable

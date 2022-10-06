@@ -6,8 +6,8 @@ import dev.datlag.dxvkotool.common.isDirectorySafely
 import dev.datlag.dxvkotool.common.listFilesSafely
 import dev.datlag.dxvkotool.common.listFrom
 import dev.datlag.dxvkotool.common.normalize
-import dev.datlag.dxvkotool.model.AppManifest
-import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.game.Game
+import dev.datlag.dxvkotool.model.game.steam.AppManifest
 import dev.datlag.dxvkotool.other.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,7 +60,7 @@ object SteamIO {
                 File(it, "steamapps/libraryfolders.vdf"),
                 File(it, "config/libraryfolders.vdf")
             ).filter { file -> file.existsSafely() && file.canReadSafely() }.flatMap { file ->
-                Acf.toLibraryConfigs(file.readText())
+                SteamConfig.toLibraryConfigs(file.readText())
             }.map { config -> config.path }.toSet().map { path ->
                 File(path, "steamapps/")
             })
@@ -88,7 +88,7 @@ object SteamIO {
         val configList = withContext(Dispatchers.IO) {
             acfFiles.map {
                 async {
-                    Acf.toAppManifest(it.readText(), it.parentFile?.absolutePath ?: it.absolutePath).getOrNull()
+                    SteamConfig.toAppManifest(it).getOrNull()
                 }
             }
         }.awaitAll().filterNotNull()

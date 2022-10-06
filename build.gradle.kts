@@ -24,7 +24,6 @@ repositories {
 val ktorfitVersion = "1.0.0-beta14"
 val ktorVersion = "2.1.2"
 val composeVersion = "1.2.0-beta02"
-val decomposeVersion = "1.0.0-alpha-06"
 
 dependencies {
     implementation(compose.desktop.currentOs)
@@ -34,8 +33,6 @@ dependencies {
     implementation("org.jetbrains.compose.material3:material3:$composeVersion")
     implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")
-    implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")

@@ -167,3 +167,9 @@ fun Collection<File>.normalize(): List<File> {
     }
     return list
 }
+
+fun File.getParentSafely(): File? {
+    return runCatching {
+        this.parentFile
+    }.getOrNull()
+}

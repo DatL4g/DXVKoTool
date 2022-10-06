@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.game.cache.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize

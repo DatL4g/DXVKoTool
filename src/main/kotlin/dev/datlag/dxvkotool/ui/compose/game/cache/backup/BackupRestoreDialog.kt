@@ -1,6 +1,5 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.game.cache.backup
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.onClick
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,19 +21,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import dev.datlag.dxvkotool.common.conditionalBackground
 import dev.datlag.dxvkotool.common.deleteSafely
-import dev.datlag.dxvkotool.common.getLastModifiedOrCreated
-import dev.datlag.dxvkotool.common.sizeSafely
-import dev.datlag.dxvkotool.common.toHumanReadableBytes
 import dev.datlag.dxvkotool.common.withAlpha
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
-import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.StringRes
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
 import java.io.File
 
 @Composable
@@ -114,33 +103,5 @@ fun BackupRestoreDialog(
                 }
             }
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun BackupItem(
-    file: File,
-    selected: MutableState<File?>
-) {
-    val lastModified = Instant.fromEpochMilliseconds(file.getLastModifiedOrCreated())
-    val lastModifiedDate = lastModified.toLocalDateTime(TimeZone.currentSystemDefault())
-    val isSelected = selected.value == file
-
-    Row(modifier = Modifier.fillMaxWidth().onClick {
-        selected.value = file
-    }.conditionalBackground(
-        isSelected,
-        MaterialTheme.colorScheme.onBackground.withAlpha(0.5F),
-        MaterialTheme.colorScheme.background
-    )) {
-        Text(
-            modifier = Modifier.weight(2F),
-            text = lastModifiedDate.toJavaLocalDateTime().format(Constants.defaultDateFormatter)
-        )
-        Text(
-            modifier = Modifier.weight(1F),
-            text = file.sizeSafely().toHumanReadableBytes()
-        )
     }
 }

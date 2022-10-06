@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.toolbar
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import dev.datlag.dxvkotool.io.LegendaryIO
 import dev.datlag.dxvkotool.io.SteamIO
 import dev.datlag.dxvkotool.other.StringRes
+import dev.datlag.dxvkotool.ui.compose.InfoDialog
 
 @Composable
 @Preview

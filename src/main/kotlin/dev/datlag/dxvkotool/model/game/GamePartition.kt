@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.game
 
 data class GamePartition(
     private val _steamGames: List<Game>,

@@ -7,7 +7,7 @@ import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import dev.datlag.DXVKoToolDB
 import dev.datlag.dxvkotool.common.existsSafely
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
-import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.game.Game
 import dev.datlag.sqldelight.db.SelectGamesWithCaches
 import dev.datlag.sqldelight.db.SteamGame
 import kotlinx.coroutines.Dispatchers
@@ -27,9 +27,10 @@ object DB {
 
     val steamGames: Flow<List<SteamGame>> = database.steamGameQueries.selectAll().asFlow().mapToList(Dispatchers.IO)
 
-    val otherGamesFlat: Flow<List<SelectGamesWithCaches>> = database.otherGameQueries.selectGamesWithCaches().asFlow().mapToList(Dispatchers.IO)
+    val otherGamesFlat: Flow<List<SelectGamesWithCaches>> =
+        database.otherGameQueries.selectGamesWithCaches().asFlow().mapToList(Dispatchers.IO)
 
-    val otherGames = otherGamesFlat.transform {games ->
+    val otherGames = otherGamesFlat.transform { games ->
         val gameList = mutableListOf<Game.Other>()
 
         games.forEach { game ->

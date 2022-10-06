@@ -8,7 +8,7 @@ import dev.datlag.dxvkotool.common.readU32
 import dev.datlag.dxvkotool.common.runSuspendCatching
 import dev.datlag.dxvkotool.common.writeU32
 import dev.datlag.dxvkotool.io.FileExtractor
-import dev.datlag.dxvkotool.model.CacheInfo
+import dev.datlag.dxvkotool.model.game.cache.CacheInfo
 import dev.datlag.dxvkotool.other.DXVK
 import dev.datlag.dxvkotool.other.DXVKException
 import dev.datlag.dxvkotool.other.DownloadException

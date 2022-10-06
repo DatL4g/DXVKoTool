@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.game.cache
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Archive
@@ -14,8 +14,6 @@ import androidx.compose.material.icons.filled.Search
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.other.StringRes
 import java.io.File
-import kotlin.Boolean
-import kotlin.String
 
 sealed class CacheInfo {
 

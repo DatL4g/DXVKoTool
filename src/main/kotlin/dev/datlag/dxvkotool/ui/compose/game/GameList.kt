@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.game
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import dev.datlag.dxvkotool.io.GameIO
-import dev.datlag.dxvkotool.model.GamePartition
+import dev.datlag.dxvkotool.model.game.GamePartition
 
 @Composable
 @Preview
@@ -31,9 +31,11 @@ fun GameList(
             0 -> items(gamePartition.steamGames) {
                 GameCard(it)
             }
+
             1 -> items(gamePartition.epicGames) {
                 GameCard(it)
             }
+
             2 -> items(gamePartition.otherGames) {
                 GameCard(it)
             }

@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.github
 
 data class Node(
     val path: String,

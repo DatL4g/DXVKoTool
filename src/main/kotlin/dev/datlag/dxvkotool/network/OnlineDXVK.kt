@@ -1,8 +1,8 @@
 package dev.datlag.dxvkotool.network
 
-import dev.datlag.dxvkotool.model.Node
-import dev.datlag.dxvkotool.model.RepoInfo
-import dev.datlag.dxvkotool.model.RepoStructure
+import dev.datlag.dxvkotool.model.github.Node
+import dev.datlag.dxvkotool.model.github.RepoInfo
+import dev.datlag.dxvkotool.model.github.RepoStructure
 import dev.datlag.dxvkotool.other.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

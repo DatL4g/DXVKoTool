@@ -6,9 +6,9 @@ import dev.datlag.dxvkotool.common.isFileSafely
 import dev.datlag.dxvkotool.common.listFrom
 import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
-import dev.datlag.dxvkotool.model.Game
-import dev.datlag.dxvkotool.model.GamePartition
-import dev.datlag.dxvkotool.model.LegendaryGame
+import dev.datlag.dxvkotool.model.game.Game
+import dev.datlag.dxvkotool.model.game.GamePartition
+import dev.datlag.dxvkotool.model.game.legendary.LegendaryGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

@@ -1,6 +1,7 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.github
 
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
+import dev.datlag.dxvkotool.model.game.Game
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.Base64

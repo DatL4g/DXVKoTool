@@ -1,9 +1,12 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.game
 
 import dev.datlag.dxvkotool.common.createBackup
 import dev.datlag.dxvkotool.common.runSuspendCatching
 import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
+import dev.datlag.dxvkotool.model.game.cache.CacheInfo
+import dev.datlag.dxvkotool.model.game.steam.AppManifest
+import dev.datlag.dxvkotool.model.github.findMatchingGameItem
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.MergeException

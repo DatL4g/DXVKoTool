@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.game
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
@@ -18,7 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.datlag.dxvkotool.model.Game
+import dev.datlag.dxvkotool.model.game.Game
+import dev.datlag.dxvkotool.ui.compose.AsyncImage
+import dev.datlag.dxvkotool.ui.compose.game.cache.GameCache
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.game.cache
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

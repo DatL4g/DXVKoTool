@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.model
+package dev.datlag.dxvkotool.model.game.legendary
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

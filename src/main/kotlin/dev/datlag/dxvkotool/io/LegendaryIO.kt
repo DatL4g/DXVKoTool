@@ -2,7 +2,7 @@ package dev.datlag.dxvkotool.io
 
 import dev.datlag.dxvkotool.common.existsSafely
 import dev.datlag.dxvkotool.common.listFrom
-import dev.datlag.dxvkotool.model.LegendaryGame
+import dev.datlag.dxvkotool.model.game.legendary.LegendaryGame
 import dev.datlag.dxvkotool.other.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

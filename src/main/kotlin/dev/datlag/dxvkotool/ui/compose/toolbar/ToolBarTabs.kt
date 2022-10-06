@@ -1,4 +1,4 @@
-package dev.datlag.dxvkotool.ui.compose
+package dev.datlag.dxvkotool.ui.compose.toolbar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,7 @@ fun ToolbarTabs(
         containerColor = MaterialTheme.colorScheme.tertiary,
         modifier = Modifier.fillMaxWidth(),
         indicator = { _ ->
-            Box {  }
+            Box { }
         }
     ) {
         list.forEachIndexed { index, text ->

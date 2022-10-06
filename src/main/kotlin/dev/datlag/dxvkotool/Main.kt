@@ -16,31 +16,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import androidx.compose.ui.window.singleWindowApplication
+import dev.datlag.dxvkotool.io.AppIO
 import dev.datlag.dxvkotool.io.LegendaryIO
 import dev.datlag.dxvkotool.io.SteamIO
 import dev.datlag.dxvkotool.network.OnlineDXVK
 import dev.datlag.dxvkotool.other.StringRes
-import dev.datlag.dxvkotool.ui.compose.FABContainer
-import dev.datlag.dxvkotool.ui.compose.GameList
-import dev.datlag.dxvkotool.ui.compose.ToolBar
+import dev.datlag.dxvkotool.ui.compose.fab.FABContainer
+import dev.datlag.dxvkotool.ui.compose.game.GameList
+import dev.datlag.dxvkotool.ui.compose.toolbar.ToolBar
 import dev.datlag.dxvkotool.ui.theme.AppTheme
-import androidx.compose.ui.window.FrameWindowScope
-import dev.datlag.dxvkotool.io.AppIO
 
 val LocalSnackbarHost = compositionLocalOf<SnackbarHostState> { error("No SnackbarHostState provided") }
 
 @Composable
 @Preview
-fun App(
-    frameWindow: FrameWindowScope
-) {
+fun App() {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val selectedGameTypeIndex = remember { mutableStateOf(0) }
 
-    AppIO.loadAppIcon(frameWindow.window, coroutineScope)
     SteamIO.reload(coroutineScope)
     OnlineDXVK.getDXVKCaches(coroutineScope)
     LegendaryIO.reload(coroutineScope)
@@ -67,11 +62,9 @@ fun App(
     }
 }
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = StringRes.get().name
-    ) {
-        App(this)
-    }
+fun main() = singleWindowApplication(
+    title = StringRes.get().name
+) {
+    AppIO.loadAppIcon(this.window, rememberCoroutineScope())
+    App()
 }
