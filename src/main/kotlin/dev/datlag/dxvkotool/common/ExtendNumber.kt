@@ -1,5 +1,6 @@
 package dev.datlag.dxvkotool.common
 
+import java.util.Locale
 import kotlin.math.log2
 import kotlin.math.pow
 
@@ -8,5 +9,5 @@ fun Long.toHumanReadableBytes(): String = log2(if (this != 0L) toDouble() else 1
         0 -> 0; 1 -> 1; else -> 2
     }
     val prefix = arrayOf("", "K", "M", "G", "T", "P", "E", "Z", "Y")
-    String.format("%.${precision}f ${prefix[it]}B", toDouble() / 2.0.pow(it * 10.0))
+    "%.${precision}f ${prefix[it]}B".format(Locale.getDefault(), toDouble() / 2.0.pow(it * 10.0))
 }
