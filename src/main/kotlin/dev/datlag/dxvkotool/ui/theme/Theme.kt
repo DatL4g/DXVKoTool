@@ -2,14 +2,13 @@ package dev.datlag.dxvkotool.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.graphics.Color
 import dev.datlag.dxvkotool.other.Constants
 import evalBash
 import mdlaf.MaterialLookAndFeel
+import mdlaf.themes.MaterialLiteTheme
 import mdlaf.themes.MaterialOceanicTheme
 import javax.swing.UIManager
 
@@ -32,7 +31,7 @@ fun AppTheme(
                 shapes = MaterialTheme.shapes.toLegacyShapes()
             ) {
                 try {
-                    val theme = MaterialLookAndFeel(MaterialOceanicTheme())
+                    val theme = MaterialLookAndFeel(if (isDark) MaterialOceanicTheme() else MaterialLiteTheme())
                     UIManager.setLookAndFeel(theme)
                 } catch (ignored: Throwable) {
                 }
