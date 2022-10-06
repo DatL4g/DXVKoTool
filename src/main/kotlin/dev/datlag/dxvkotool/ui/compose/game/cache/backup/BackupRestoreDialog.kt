@@ -24,6 +24,7 @@ import androidx.compose.ui.window.Dialog
 import dev.datlag.dxvkotool.common.deleteSafely
 import dev.datlag.dxvkotool.common.withAlpha
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
+import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.StringRes
 import java.io.File
 
@@ -33,7 +34,6 @@ fun BackupRestoreDialog(
     isDialogOpen: MutableState<Boolean>,
     onSelected: (File?) -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val backupFiles by cache.backupFiles.collectAsState()
     val selectedItem: MutableState<File?> = mutableStateOf(null)
 
@@ -65,42 +65,7 @@ fun BackupRestoreDialog(
                         BackupItem(it, selectedItem)
                     }
                 }
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(modifier = Modifier, onClick = {
-                        val deleted = selectedItem.value?.deleteSafely() == true
-                        if (deleted) {
-                            selectedItem.value = null
-                            cache.reloadBackupFiles(coroutineScope)
-                        }
-                    }) {
-                        Text(
-                            text = StringRes.get().delete,
-                            color = if (selectedItem.value != null) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.withAlpha(
-                                0.5F
-                            )
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1F))
-                    TextButton(onClick = {
-                        isDialogOpen.value = false
-                    }) {
-                        Text(
-                            text = StringRes.get().cancel,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    TextButton(onClick = {
-                        onSelected.invoke(selectedItem.value)
-                        isDialogOpen.value = false
-                    }, enabled = selectedItem.value != null) {
-                        Text(
-                            text = StringRes.get().restore,
-                            color = if (selectedItem.value != null) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.withAlpha(
-                                0.5F
-                            )
-                        )
-                    }
-                }
+                BackupRestoreDialogButtonRow(cache, isDialogOpen, selectedItem, onSelected)
             }
         }
     }

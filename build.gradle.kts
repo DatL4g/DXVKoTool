@@ -48,6 +48,7 @@ dependencies {
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")
 
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
+    implementation("com.sealwu:kscript-tools:1.0.21")
 }
 
 tasks.withType<KotlinCompile> {

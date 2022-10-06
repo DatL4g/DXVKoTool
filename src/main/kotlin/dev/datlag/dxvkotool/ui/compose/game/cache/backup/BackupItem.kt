@@ -36,7 +36,7 @@ fun BackupItem(
             selected.value = file
         }.conditionalBackground(
             isSelected,
-            MaterialTheme.colorScheme.onBackground.withAlpha(0.5F),
+            MaterialTheme.colorScheme.onBackground.withAlpha(Constants.HALF_ALPHA_NUMBER),
             MaterialTheme.colorScheme.background
         )
     ) {

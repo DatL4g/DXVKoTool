@@ -26,6 +26,7 @@ import androidx.compose.ui.window.Dialog
 import dev.datlag.dxvkotool.common.withAlpha
 import dev.datlag.dxvkotool.model.github.Node
 import dev.datlag.dxvkotool.network.OnlineDXVK
+import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.StringRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ fun ConnectDialog(
             closeRequest()
         }, title = StringRes.get().connectRepoItem) {
             Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(8.dp)) {
-                Text("Select the matching dxvk-cache info file")
+                Text(StringRes.get().selectMatchingDxvkCache)
 
                 LazyColumn(
                     modifier = Modifier.weight(1F),
@@ -69,7 +70,7 @@ fun ConnectDialog(
                         closeRequest()
                     }) {
                         Text(
-                            text = "Close",
+                            text = StringRes.get().close,
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -78,10 +79,12 @@ fun ConnectDialog(
                         closeRequest()
                     }, enabled = selectedItem.value?.hasChilds() == false) {
                         Text(
-                            text = "Select",
-                            color = if (selectedItem.value?.hasChilds() == false) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.withAlpha(
-                                0.5F
-                            )
+                            text = StringRes.get().select,
+                            color = if (selectedItem.value?.hasChilds() == false) {
+                                MaterialTheme.colorScheme.onBackground
+                            } else {
+                                MaterialTheme.colorScheme.onBackground.withAlpha(Constants.HALF_ALPHA_NUMBER)
+                            }
                         )
                     }
                 }

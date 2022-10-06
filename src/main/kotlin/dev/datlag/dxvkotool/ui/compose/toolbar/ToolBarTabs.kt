@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.datlag.dxvkotool.other.StringRes
+import dev.datlag.dxvkotool.ui.theme.Shape
 
 @Composable
 fun ToolbarTabs(
@@ -35,10 +36,10 @@ fun ToolbarTabs(
             Tab(
                 modifier = if (selected) Modifier
                     .padding(horizontal = 8.dp, vertical = 4.dp)
-                    .clip(RoundedCornerShape(50))
+                    .clip(Shape.FullRoundedShape)
                     .background(MaterialTheme.colorScheme.onTertiary)
                 else Modifier
-                    .clip(RoundedCornerShape(50))
+                    .clip(Shape.FullRoundedShape)
                     .background(MaterialTheme.colorScheme.tertiary),
                 selected = selected,
                 onClick = {

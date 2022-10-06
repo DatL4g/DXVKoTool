@@ -43,9 +43,12 @@ object FileExtractor {
 
         cache.info.emit(CacheInfo.Processing.FindMatchingFile)
         val destinationTree = destination.walkTopDown()
-        return@runSuspendCatching destinationTree.firstOrNull {
+
+        return@runSuspendCatching checkNotNull(destinationTree.firstOrNull {
             it.extension.equals("dxvk-cache", true) && it.nameWithoutExtension.equals(name, true)
-        } ?: destinationTree.singleOrNull() ?: throw IllegalStateException()
+        } ?: destinationTree.singleOrNull()) {
+            "No matching file found in downloaded cache"
+        }
     }
 
 }

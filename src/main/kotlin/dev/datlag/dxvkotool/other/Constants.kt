@@ -42,6 +42,14 @@ object Constants {
     const val dxvkRepoProjectLink = "https://github.com/$dxvkRepoOwner/$dxvkRepo"
 
     const val GNOME = "GNOME"
+
+    const val BYTE_POWERS_NUMBER = 10
+    const val HALF_ALPHA_NUMBER = 0.5F
+    const val HALF_PARENT_FRACTION_NUMBER = 0.5F
+
+    const val LINUX_DARK_MODE_CMD = "gsettings get org.gnome.desktop.interface color-scheme"
+    const val LINUX_DARK_MODE_LEGACY_CMD = "gsettings get org.gnome.desktop.interface gtk-theme"
+
     val tikaCore = Tika()
 
     val json = Json {

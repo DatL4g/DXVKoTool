@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.dp
 
 object Shape {
 
-    private val FullRoundedShape = Shapes.Full
+    val FullRoundedShape = Shapes.Full
 
     val LeftRoundedShape = AbsoluteRoundedCornerShape(
         FullRoundedShape.topStart,

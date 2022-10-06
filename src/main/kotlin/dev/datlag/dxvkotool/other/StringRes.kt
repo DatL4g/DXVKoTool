@@ -63,6 +63,9 @@ interface AppStringRes {
     val loadLocalDxvkCacheFile: String
     val mergeLocalDxvkCacheFile: String
     val selectGameFolder: String
+
+    val select: String
+    val selectMatchingDxvkCache: String
 }
 
 object StringRes {
@@ -132,6 +135,9 @@ object StringRes {
         override val loadLocalDxvkCacheFile: String = "Load local dxvk-cache file"
         override val mergeLocalDxvkCacheFile: String = "Merge local dxvk-cache file"
         override val selectGameFolder: String = "Select Game folder"
+
+        override val select: String = "Select"
+        override val selectMatchingDxvkCache: String = "Select the matching dxvk-cache info file"
     }
 
     fun get() = en

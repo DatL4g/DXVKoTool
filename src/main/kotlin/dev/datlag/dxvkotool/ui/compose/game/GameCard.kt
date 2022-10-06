@@ -38,7 +38,8 @@ fun GameCard(game: Game) {
                 text = game.name,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(16.dp, 8.dp),
-                fontSize = 22.sp
+                fontSize = 22.sp,
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
                 text = game.path.absolutePath,
@@ -47,7 +48,8 @@ fun GameCard(game: Game) {
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Light,
                 softWrap = false,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         caches.forEach {

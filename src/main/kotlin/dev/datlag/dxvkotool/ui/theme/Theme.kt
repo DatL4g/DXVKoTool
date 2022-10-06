@@ -4,63 +4,48 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Color
+import dev.datlag.dxvkotool.other.Constants
+import evalBash
 import mdlaf.MaterialLookAndFeel
 import mdlaf.themes.MaterialOceanicTheme
 import javax.swing.UIManager
 
+val LocalDarkMode = compositionLocalOf<Boolean> { error("No dark mode state provided") }
 
-private val DarkColors = darkColorScheme(
-    primary = md_theme_dark_primary,
-    onPrimary = md_theme_dark_onPrimary,
-    primaryContainer = md_theme_dark_primaryContainer,
-    onPrimaryContainer = md_theme_dark_onPrimaryContainer,
-    secondary = md_theme_dark_secondary,
-    onSecondary = md_theme_dark_onSecondary,
-    secondaryContainer = md_theme_dark_secondaryContainer,
-    onSecondaryContainer = md_theme_dark_onSecondaryContainer,
-
-    tertiary = md_theme_dark_tertiary,
-    onTertiary = md_theme_dark_onTertiary,
-    tertiaryContainer = md_theme_dark_tertiaryContainer,
-    onTertiaryContainer = md_theme_dark_onTertiaryContainer,
-
-    error = md_theme_dark_error,
-    errorContainer = md_theme_dark_errorContainer,
-    onError = md_theme_dark_onError,
-    onErrorContainer = md_theme_dark_onErrorContainer,
-    background = md_theme_dark_background,
-    onBackground = md_theme_dark_onBackground,
-    surface = md_theme_dark_surface,
-    onSurface = md_theme_dark_onSurface,
-    surfaceVariant = md_theme_dark_surfaceVariant,
-    onSurfaceVariant = md_theme_dark_onSurfaceVariant,
-    outline = md_theme_dark_outline,
-    inverseOnSurface = md_theme_dark_inverseOnSurface,
-    inverseSurface = md_theme_dark_inverseSurface,
-    inversePrimary = md_theme_dark_inversePrimary
-)
 
 @Composable
 fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
-    // unable to detect Adwaita dark/light theme
-    val isDark = true
+    val isDark = useDarkTheme || getSystemDarkModeInfo()
 
-    MaterialTheme(
-        colorScheme = DarkColors
-    ) {
-        androidx.compose.material.MaterialTheme(
-            colors = MaterialTheme.colorScheme.toLegacyColors(isDark),
-            shapes = MaterialTheme.shapes.toLegacyShapes()
+    CompositionLocalProvider(LocalDarkMode provides isDark) {
+        MaterialTheme(
+            colorScheme = if (isDark) Colors.getDarkScheme() else Colors.getLightScheme()
         ) {
-            try {
-                val theme = MaterialLookAndFeel(MaterialOceanicTheme())
-                UIManager.setLookAndFeel(theme)
-            } catch (ignored: Throwable) {
+            androidx.compose.material.MaterialTheme(
+                colors = MaterialTheme.colorScheme.toLegacyColors(isDark),
+                shapes = MaterialTheme.shapes.toLegacyShapes()
+            ) {
+                try {
+                    val theme = MaterialLookAndFeel(MaterialOceanicTheme())
+                    UIManager.setLookAndFeel(theme)
+                } catch (ignored: Throwable) {
+                }
+                content()
             }
-            content()
         }
     }
+}
+
+fun getSystemDarkModeInfo(): Boolean {
+    val linuxDarkMode = (Constants.LINUX_DARK_MODE_CMD.evalBash().getOrDefault(String())).ifEmpty {
+        Constants.LINUX_DARK_MODE_LEGACY_CMD.evalBash().getOrDefault(String())
+    }.contains("dark", true)
+
+    return linuxDarkMode
 }

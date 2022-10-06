@@ -14,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import dev.datlag.dxvkotool.common.conditionalBackground
 import dev.datlag.dxvkotool.common.withAlpha
 import dev.datlag.dxvkotool.model.github.Node
 import dev.datlag.dxvkotool.network.OnlineDXVK
+import dev.datlag.dxvkotool.other.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -38,7 +40,11 @@ fun ConnectItem(item: Node, selected: MutableState<Node?>) {
         } else {
             selected.value = item
         }
-    }.background(if (isSelected) MaterialTheme.colorScheme.onBackground.withAlpha(0.5F) else MaterialTheme.colorScheme.background)) {
+    }.conditionalBackground(
+        isSelected,
+        MaterialTheme.colorScheme.onBackground.withAlpha(Constants.HALF_ALPHA_NUMBER),
+        MaterialTheme.colorScheme.background
+    )) {
         Icon(
             if (item.hasChilds()) Icons.Filled.Folder else Icons.Filled.InsertDriveFile, item.path
         )
