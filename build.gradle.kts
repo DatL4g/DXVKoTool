@@ -24,14 +24,18 @@ repositories {
 val ktorfitVersion = "1.0.0-beta14"
 val ktorVersion = "2.1.2"
 val composeVersion = "1.2.0-beta02"
+val decomposeVersion = "1.0.0-alpha-06"
 
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
     implementation("org.jetbrains.compose.material3:material3:$composeVersion")
     implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")
+    implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -41,7 +45,7 @@ dependencies {
 
     implementation("org.tukaani:xz:1.9")
     implementation("org.rauschig:jarchivelib:1.2.0")
-    implementation("org.apache.tika:tika-core:2.4.1")
+    implementation("org.apache.tika:tika-core:2.5.0")
 
     implementation("com.squareup.sqldelight:sqlite-driver:1.5.3")
     implementation("com.squareup.sqldelight:coroutines-extensions-jvm:1.5.3")
@@ -57,7 +61,15 @@ compose.desktop {
     application {
         mainClass = "dev.datlag.dxvkotool.MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.AppImage, TargetFormat.Rpm, TargetFormat.Deb)
+            targetFormats(
+                TargetFormat.AppImage,
+                TargetFormat.Rpm,
+                TargetFormat.Deb,
+                TargetFormat.Exe,
+                TargetFormat.Msi,
+                // TargetFormat.Dmg, as soon as 1.0.0 is available (requires 'MAJOR[.MINOR][.PATCH]')
+                // TargetFormat.Pkg as soon as 1.0.0 is available (requires 'MAJOR[.MINOR][.PATCH]')
+            )
             packageName = "DXVKoTool"
             packageVersion = appVersion
             outputBaseDir.set(project.buildDir.resolve("release"))
@@ -67,6 +79,7 @@ compose.desktop {
 
             linux {
                 iconFile.set(project.file("./src/main/resources/AppIcon128.png"))
+                rpmLicenseType = "GPL-3.0"
             }
 
             modules("java.instrument", "java.management", "java.naming", "java.prefs", "java.sql", "jdk.unsupported")

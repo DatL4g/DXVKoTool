@@ -150,17 +150,15 @@ fun File.isSame(file: File?): Boolean {
     }
 }
 
-fun Collection<File>.normalize(mustExist: Boolean = true): List<File> {
+fun Collection<File>.normalize(): List<File> {
     val list: MutableList<File> = mutableListOf()
     this.forEach { file ->
         var realFile = file.getRealFile()
-        if (mustExist) {
-            if (!realFile.existsSafely()) {
-                if (file.existsSafely()) {
-                    realFile = file
-                } else {
-                    return@forEach
-                }
+        if (!realFile.existsSafely()) {
+            if (file.existsSafely()) {
+                realFile = file
+            } else {
+                return@forEach
             }
         }
         if (list.firstOrNull { it.isSame(realFile) } == null) {

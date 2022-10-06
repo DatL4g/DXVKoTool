@@ -32,7 +32,10 @@ object SteamIO {
     private fun getSystemAcf(): List<File> {
         val systemSteamFolders = listOf(
             File(Constants.userDir, Constants.STEAM_DEFAULT_ROOT),
-            File(Constants.userDir, Constants.STEAM_SYMLINK_ROOT)
+            File(Constants.userDir, Constants.STEAM_SYMLINK_ROOT),
+            File(Constants.STEAM_WINDOWS_DEFAULT_ROOT),
+            File(Constants.STEAM_WINDOWS_NEW_ROOT),
+            File(Constants.userDir, Constants.STEAM_MAC_DEFAULT_ROOT)
         )
 
         return getSteamAppsFolders(systemSteamFolders)

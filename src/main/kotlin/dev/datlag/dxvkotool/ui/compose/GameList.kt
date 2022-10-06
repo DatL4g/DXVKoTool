@@ -19,11 +19,7 @@ import dev.datlag.dxvkotool.model.GamePartition
 fun GameList(
     selectedGameTypeIndex: MutableState<Int>
 ) {
-    val gamePartition by GameIO.allGamesPartitioned.collectAsState(GamePartition(
-        emptyList(),
-        emptyList(),
-        emptyList()
-    ))
+    val gamePartition by GameIO.allGamesPartitioned.collectAsState(GamePartition.empty())
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 500.dp),

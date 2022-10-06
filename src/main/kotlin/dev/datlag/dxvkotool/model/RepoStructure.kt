@@ -11,7 +11,11 @@ data class RepoStructure(
     @SerialName("url") val url: String,
     @SerialName("tree") val tree: List<StructureItem>
 ) {
-    fun findMatchingGameItem(game: Game, ignoreSpaces: Boolean = false, ignoreSpecialChars: Boolean = false): Map<DxvkStateCache, StructureItem?> {
+    fun findMatchingGameItem(
+        game: Game,
+        ignoreSpaces: Boolean = false,
+        ignoreSpecialChars: Boolean = false
+    ): Map<DxvkStateCache, StructureItem?> {
         val matchingItems = tree.mapNotNull { item ->
             val pathSplit = item.path.split('/')
             val anyMatching = pathSplit.any {

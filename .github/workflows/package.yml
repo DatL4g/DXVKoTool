@@ -9,7 +9,7 @@ jobs:
   package:
     strategy:
       matrix:
-        os: [ubuntu-latest] # windows/mac platform coming later
+        os: [ubuntu-latest, windows-latest] # macos-latest as soon as v1.0.0 is ready
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -28,7 +28,11 @@ jobs:
 
       - name: Execute packaging on Windows
         if: matrix.os == 'windows-latest'
-        run: gradlew packageExe
+        run: gradlew packageExe; gradlew packageMsi
+
+      - name: Execute packaging on Mac
+        if: matrix.os == 'macos-latest'
+        run: ./gradlew packageDmg; ./gradlew packagePkg
 
       - name: Upload
         uses: softprops/action-gh-release@v1
@@ -37,3 +41,6 @@ jobs:
             ./build/release/main/app/DXVKoTool.tar.xz
             ./build/release/main/deb/*.deb
             ./build/release/main/exe/*.exe
+            ./build/release/main/msi/*.msi
+            ./build/release/main/dmg/*.dmg
+            ./build/release/main/pkg/*.pkg

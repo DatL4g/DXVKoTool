@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import dev.datlag.dxvkotool.common.conditionalBackground
 import dev.datlag.dxvkotool.common.deleteSafely
 import dev.datlag.dxvkotool.common.getLastModifiedOrCreated
 import dev.datlag.dxvkotool.common.sizeSafely
@@ -128,7 +129,11 @@ fun BackupItem(
 
     Row(modifier = Modifier.fillMaxWidth().onClick {
         selected.value = file
-    }.background(if (isSelected) MaterialTheme.colorScheme.onBackground.withAlpha(0.5F) else MaterialTheme.colorScheme.background)) {
+    }.conditionalBackground(
+        isSelected,
+        MaterialTheme.colorScheme.onBackground.withAlpha(0.5F),
+        MaterialTheme.colorScheme.background
+    )) {
         Text(
             modifier = Modifier.weight(2F),
             text = lastModifiedDate.toJavaLocalDateTime().format(Constants.defaultDateFormatter)

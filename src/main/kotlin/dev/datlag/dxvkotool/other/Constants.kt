@@ -19,6 +19,11 @@ object Constants {
     const val STEAM_FLATPAK_ROOT = ".var/app/com.valvesoftware.Steam/.local/share/Steam/"
     const val STEAM_FLATPAK_SYMLINK_ROOT = ".var/app/com.valvesoftware.Steam/.steam/steam/"
 
+    const val STEAM_WINDOWS_DEFAULT_ROOT = "C:\\Program Files (x86)\\Steam\\"
+    const val STEAM_WINDOWS_NEW_ROOT = "C:\\Program Files\\Steam\\"
+
+    const val STEAM_MAC_DEFAULT_ROOT = "Library/Application Support/Steam/"
+
     const val ACF_ALL_ENDING_WITH_COMMA = "\"\\S+\"\\s+\"(\\S|[ ])*\"(?!(\\s+)?})"
     const val ACF_ALL_ENDING_WITH_COLON = "\"(\\S|[ ])*\"(?!([,]|\\s+(}|])))"
     const val ACF_ALL_ENDING_WITH_PARENTHESIS = "(}|])(?!([,]|\\s+(}|])))"
