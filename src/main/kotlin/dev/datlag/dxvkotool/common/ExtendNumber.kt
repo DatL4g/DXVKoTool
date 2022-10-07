@@ -5,7 +5,7 @@ import java.util.Locale
 import kotlin.math.log2
 import kotlin.math.pow
 
-fun Long.toHumanReadableBytes(): String = log2(if (this != 0L) toDouble() else 1.0).toInt().div(10).let {
+fun Long.toHumanReadableBytes(): String = log2(if (this != 0L) toDouble() else 1.0).toInt().div(Constants.BYTE_POWERS_NUMBER).let {
     val precision = when (it) {
         0 -> 0; 1 -> 1; else -> 2
     }

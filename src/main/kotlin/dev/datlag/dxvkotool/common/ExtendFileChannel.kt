@@ -1,5 +1,6 @@
 package dev.datlag.dxvkotool.common
 
+import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.DXVKException
 import dev.datlag.dxvkotool.other.ReadErrorType
 import java.nio.ByteBuffer
@@ -7,7 +8,7 @@ import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 
 fun FileChannel.readU32(order: ByteOrder?): Result<UInt> = runCatching {
-    val bytes = ByteBuffer.allocate(4)
+    val bytes = ByteBuffer.allocate(Constants.U32_BYTE_BUFFER_CAPACITY)
     order?.let { bytes.order(it) }
     val state = this.read(bytes)
 
@@ -15,11 +16,14 @@ fun FileChannel.readU32(order: ByteOrder?): Result<UInt> = runCatching {
         throw DXVKException.ReadError(ReadErrorType.U32)
     }
 
-    bytes[0].unsignedInt(order) + bytes[1].unsignedShl(8, order) + bytes[2].unsignedShl(16, order) + bytes[3].unsignedShl(24, order)
+    bytes[Constants.BYTE_POSITION_1].unsignedInt(order) +
+        bytes[Constants.BYTE_POSITION_2].unsignedShl(Constants.BYTE_POSITION_2_SHIFT, order) +
+        bytes[Constants.BYTE_POSITION_3].unsignedShl(Constants.BYTE_POSITION_3_SHIFT, order) +
+        bytes[Constants.BYTE_POSITION_4].unsignedShl(Constants.BYTE_POSITION_4_SHIFT, order)
 }
 
 fun FileChannel.readU24(order: ByteOrder?): Result<UInt> = runCatching {
-    val bytes = ByteBuffer.allocate(3)
+    val bytes = ByteBuffer.allocate(Constants.U24_BYTE_BUFFER_CAPACITY)
     order?.let { bytes.order(it) }
     val state = this.read(bytes)
 
@@ -27,11 +31,13 @@ fun FileChannel.readU24(order: ByteOrder?): Result<UInt> = runCatching {
         throw DXVKException.ReadError(ReadErrorType.U24)
     }
 
-    bytes[0].unsignedInt(order) + bytes[1].unsignedShl(8, order) + bytes[2].unsignedShl(16, order)
+    bytes[Constants.BYTE_POSITION_1].unsignedInt(order) +
+        bytes[Constants.BYTE_POSITION_2].unsignedShl(Constants.BYTE_POSITION_2_SHIFT, order) +
+        bytes[Constants.BYTE_POSITION_3].unsignedShl(Constants.BYTE_POSITION_3_SHIFT, order)
 }
 
 fun FileChannel.readU8(order: ByteOrder?): Result<UInt> = runCatching {
-    val bytes = ByteBuffer.allocate(1)
+    val bytes = ByteBuffer.allocate(Constants.U8_BYTE_BUFFER_CAPACITY)
     order?.let { bytes.order(it) }
     val state = this.read(bytes)
 
@@ -39,15 +45,15 @@ fun FileChannel.readU8(order: ByteOrder?): Result<UInt> = runCatching {
         throw DXVKException.ReadError(ReadErrorType.U8)
     }
 
-    bytes[0].unsignedInt(order)
+    bytes[Constants.BYTE_POSITION_1].unsignedInt(order)
 }
 
 fun FileChannel.writeU32(value: UInt, order: ByteOrder?) = runCatching {
     val byteArray = byteArrayOf(
         value.toByte(),
-        value.shr(8).toByte(),
-        value.shr(16).toByte(),
-        value.shr(24).toByte()
+        value.shr(Constants.BYTE_POSITION_2_SHIFT).toByte(),
+        value.shr(Constants.BYTE_POSITION_3_SHIFT).toByte(),
+        value.shr(Constants.BYTE_POSITION_4_SHIFT).toByte()
     )
     val bytes = ByteBuffer.wrap(byteArray)
     order?.let { bytes.order(it) }
@@ -57,8 +63,8 @@ fun FileChannel.writeU32(value: UInt, order: ByteOrder?) = runCatching {
 fun FileChannel.writeU24(value: UInt, order: ByteOrder?) = runCatching {
     val byteArray = byteArrayOf(
         value.toByte(),
-        value.shr(8).toByte(),
-        value.shr(16).toByte()
+        value.shr(Constants.BYTE_POSITION_2_SHIFT).toByte(),
+        value.shr(Constants.BYTE_POSITION_3_SHIFT).toByte()
     )
     val bytes = ByteBuffer.wrap(byteArray)
     order?.let { bytes.order(it) }

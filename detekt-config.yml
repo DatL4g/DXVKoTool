@@ -1,13 +1,18 @@
-style:
-  MaxLineLength:
-    maxLineLength: 140
-
 exceptions:
   TooGenericExceptionThrown:
     active: false
+
+complexity:
+  TooManyFunctions:
+    excludes: ['**/common/**']
+    thresholdInFiles: 20
 
 naming:
   ConstructorParameterNaming:
     privateParameterPattern: '[_a-z][A-Za-z0-9]*'
   FunctionNaming:
     functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+
+style:
+  MaxLineLength:
+    maxLineLength: 140

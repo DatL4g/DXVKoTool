@@ -7,6 +7,9 @@ object DXVK {
     const val HASH_SIZE = 20
     const val LEGACY_VERSION = 7
 
+    const val MAGIC_BYTE_BUFFER_CAPACITY = 4
+
+    private const val EMPTY_HEADER_BYTE_SIZE = 20
     private const val EMPTY_HEADER_BYTE_VALUE_1 = 218
     private const val EMPTY_HEADER_BYTE_POS_1 = 0
     private const val EMPTY_HEADER_BYTE_VALUE_2 = 57
@@ -53,7 +56,7 @@ object DXVK {
 
     val ENDIAN = ByteOrder.LITTLE_ENDIAN
     val SHA1_EMPTY = run {
-        val bytes = ByteArray(20)
+        val bytes = ByteArray(EMPTY_HEADER_BYTE_SIZE)
         bytes[EMPTY_HEADER_BYTE_POS_1] = (EMPTY_HEADER_BYTE_VALUE_1).toByte()
         bytes[EMPTY_HEADER_BYTE_POS_2] = (EMPTY_HEADER_BYTE_VALUE_2).toByte()
         bytes[EMPTY_HEADER_BYTE_POS_3] = (EMPTY_HEADER_BYTE_VALUE_3).toByte()

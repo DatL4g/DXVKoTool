@@ -50,6 +50,22 @@ object Constants {
     const val LINUX_DARK_MODE_CMD = "gsettings get org.gnome.desktop.interface color-scheme"
     const val LINUX_DARK_MODE_LEGACY_CMD = "gsettings get org.gnome.desktop.interface gtk-theme"
 
+    const val KIBIBYTE_SIZE = 1024
+    const val BYTE_MULTIPLY_FACTOR = 1000
+
+    const val U32_BYTE_BUFFER_CAPACITY = 4
+    const val U24_BYTE_BUFFER_CAPACITY = 3
+    const val U8_BYTE_BUFFER_CAPACITY = 1
+
+    const val BYTE_POSITION_1 = 0
+    const val BYTE_POSITION_2 = 1
+    const val BYTE_POSITION_3 = 2
+    const val BYTE_POSITION_4 = 3
+
+    const val BYTE_POSITION_2_SHIFT = 8
+    const val BYTE_POSITION_3_SHIFT = 16
+    const val BYTE_POSITION_4_SHIFT = 24
+
     val tikaCore = Tika()
 
     val json = Json {

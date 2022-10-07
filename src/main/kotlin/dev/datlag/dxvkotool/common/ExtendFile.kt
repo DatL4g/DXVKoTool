@@ -107,14 +107,9 @@ fun File.deleteSafely(): Boolean {
 }
 
 fun File.createBackup(): File {
-    var backupFile = this
-    while (true) {
-        backupFile = File(backupFile.parentFile, "${backupFile.name}.bak")
-        if (backupFile.existsSafely()) {
-            continue
-        } else {
-            break
-        }
+    var backupFile = File(this.getParentSafely() ?: this.parentFile, "${this.name}.bak")
+    while (backupFile.existsSafely()) {
+        backupFile = File(this.getParentSafely() ?: this.parentFile, "${backupFile.name}.bak")
     }
     return backupFile
 }

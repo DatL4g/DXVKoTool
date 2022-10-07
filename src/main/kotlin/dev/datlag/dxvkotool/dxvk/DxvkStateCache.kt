@@ -63,8 +63,8 @@ data class DxvkStateCache(
     }
 
     suspend fun writeTo(writer: FileChannel) = runSuspendCatching {
-        if (entries.isEmpty()) {
-            throw IllegalStateException()
+        check(entries.isNotEmpty()) {
+            "Could not write cache because it does not contain any entries"
         }
         header.writeTo(writer).getOrThrow()
         entries.forEach {
@@ -158,7 +158,7 @@ data class DxvkStateCache(
 
         companion object {
             fun fromReader(reader: FileChannel): Result<Header> = runCatching {
-                val magic = ByteBuffer.allocate(4)
+                val magic = ByteBuffer.allocate(DXVK.MAGIC_BYTE_BUFFER_CAPACITY)
                 reader.read(magic)
 
                 if (String(magic.array()) != DXVK.MAGIC) {
