@@ -10,7 +10,7 @@ plugins {
     id("com.squareup.sqldelight") version "1.5.3"
 }
 
-val appVersion = "0.3.1"
+val appVersion = "0.4.0"
 
 group = "dev.datlag"
 version = appVersion
