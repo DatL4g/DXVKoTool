@@ -1,3 +1,5 @@
+.flatpak-builder
+export
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,intellij,intellij+iml,intellij+all,netbeans,visualstudiocode,gradle,maven,java,kotlin
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,intellij,intellij+iml,intellij+all,netbeans,visualstudiocode,gradle,maven,java,kotlin
 

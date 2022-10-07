@@ -1,0 +1,23 @@
+app-id: dev.datlag.DXVKoTool
+runtime: org.freedesktop.Platform
+runtime-version: '21.08'
+sdk: org.freedesktop.Sdk
+command: DXVKoTool.AppImage
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk17
+modules:
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk17/install.sh
+  - name: dxvkotool
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 DXVKoTool.AppImage /app/bin/DXVKoTool.AppImage
+    sources:
+      - type: file
+        path: DXVKoTool.AppImage
+      - type: file
+        path: DXVKoTool.desktop
+finish-args:
+  - --env=PATH=/app/jre/bin:/usr/bin

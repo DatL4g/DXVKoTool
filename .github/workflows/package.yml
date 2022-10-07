@@ -23,9 +23,25 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Execute packaging on Ubuntu
+      - name: Create debian package on Ubuntu
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew packageDeb; ./gradlew packageAppImage && cd ./build/release/main/app/ && tar cJf DXVKoTool.tar.xz DXVKoTool
+        run: ./gradlew packageDeb
+
+      - name: Create container packages on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          ./gradlew packageAppImage
+          mkdir -p ./build/release/main/image/DXVKoTool/usr
+          curl --request GET --url https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage --location --output ./build/release/main/image/appimagetool.AppImage
+          curl --request GET --url https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-x86_64 --location --output ./build/release/main/image/DXVKoTool/AppRun
+          chmod +x ./build/release/main/image/appimagetool.AppImage
+          chmod +x ./build/release/main/image/DXVKoTool/AppRun
+          cp ./DXVKoTool.desktop ./build/release/main/image/DXVKoTool/
+          cp ./build/release/main/app/DXVKoTool/lib/DXVKoTool.png ./build/release/main/image/DXVKoTool/
+          cp -r ./build/release/main/app/DXVKoTool/bin ./build/release/main/image/DXVKoTool/usr/
+          cp -r ./build/release/main/app/DXVKoTool/lib ./build/release/main/image/DXVKoTool/usr/
+          ./build/release/main/image/appimagetool.AppImage ./build/release/main/image/DXVKoTool ./build/release/main/image/DXVKoTool.AppImage
+          tar cJf ./build/release/main/app/DXVKoTool.tar.xz ./build/release/main/app/DXVKoTool
 
       - name: Execute packaging on Windows
         if: matrix.os == 'windows-latest'
@@ -41,6 +57,7 @@ jobs:
         with:
           files: |
             ./build/release/main/app/DXVKoTool.tar.xz
+            ./build/release/main/image/DXVKoTool.AppImage
             ./build/release/main/deb/*.deb
             ./build/release/main/exe/*.exe
             ./build/release/main/msi/*.msi
