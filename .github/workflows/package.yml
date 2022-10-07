@@ -10,6 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest] # macos-latest as soon as v1.0.0 is ready
+      fail-fast: false
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -28,7 +29,7 @@ jobs:
 
       - name: Execute packaging on Windows
         if: matrix.os == 'windows-latest'
-        run: gradlew packageExe; gradlew packageMsi
+        run: gradlew.bat packageExe; gradlew.bat packageMsi
 
       - name: Execute packaging on Mac
         if: matrix.os == 'macos-latest'
