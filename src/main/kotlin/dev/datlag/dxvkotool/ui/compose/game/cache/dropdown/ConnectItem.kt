@@ -1,7 +1,6 @@
 package dev.datlag.dxvkotool.ui.compose.game.cache.dropdown
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.onClick
 import androidx.compose.material.icons.Icons
