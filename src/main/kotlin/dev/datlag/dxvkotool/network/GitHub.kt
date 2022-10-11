@@ -3,6 +3,7 @@ package dev.datlag.dxvkotool.network
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Url
+import dev.datlag.dxvkotool.model.github.Branch
 import dev.datlag.dxvkotool.model.github.RepoStructure
 import dev.datlag.dxvkotool.model.github.StructureItemContent
 
@@ -18,4 +19,10 @@ interface GitHub {
     suspend fun getStructureItemContent(
         @Url url: String
     ): StructureItemContent
+
+    @GET("repos/{user}/{repo}/branches")
+    suspend fun getBranches(
+        @Path("user") user: String,
+        @Path("repo") repo: String
+    ): List<Branch>
 }

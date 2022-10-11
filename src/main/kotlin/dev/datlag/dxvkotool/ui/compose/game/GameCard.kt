@@ -26,7 +26,8 @@ import dev.datlag.dxvkotool.ui.compose.game.cache.GameCache
 @Composable
 @Preview
 fun GameCard(game: Game) {
-    val caches by game.cacheInfoCollector.collectAsState(emptySet())
+    val cachesMap by game.cacheInfoCollector.collectAsState(emptyMap())
+    val caches = cachesMap.keys
 
     ElevatedCard(modifier = Modifier.fillMaxSize()) {
         AsyncImage(

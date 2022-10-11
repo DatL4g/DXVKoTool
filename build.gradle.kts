@@ -21,7 +21,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val ktorfitVersion = "1.0.0-beta14"
+val ktorfitVersion = "1.0.0-beta15"
 val ktorVersion = "2.1.2"
 val composeVersion = "1.2.0-beta02"
 

@@ -52,6 +52,8 @@ fun CacheDropdownMenu(
     ConnectDialog(isConnectDialogOpen) {
         if (it != null && game is Game.Steam) {
             DB.database.steamGameQueries.insert(game.manifest.appId.toLong(), cache.file.name, it.item.path)
+        } else if (it != null && game is Game.Other) {
+            DB.database.otherGameQueries.insertGameCache(game.path.absolutePath, cache.file.absolutePath, it.item.path)
         }
     }
 
