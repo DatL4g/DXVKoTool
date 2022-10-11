@@ -10,7 +10,7 @@ plugins {
     id("com.squareup.sqldelight") version "1.5.3"
 }
 
-val appVersion = "0.4.0"
+val appVersion = "0.4.1"
 
 group = "dev.datlag"
 version = appVersion
@@ -76,14 +76,15 @@ compose.desktop {
             licenseFile.set(project.file("LICENSE"))
 
             linux {
-                iconFile.set(project.file("./src/main/resources/AppIcon128.png"))
+                iconFile.set(project.file("./AppIcon.png"))
                 rpmLicenseType = "GPL-3.0"
+                appCategory = "Utility"
             }
             windows {
-                iconFile.set(project.file("./src/main/resources/AppIcon128.ico"))
+                iconFile.set(project.file("./AppIcon.ico"))
             }
             macOS {
-                iconFile.set(project.file("./src/main/resources/AppIcon.icns"))
+                iconFile.set(project.file("./AppIcon.icns"))
             }
 
             modules("java.instrument", "java.management", "java.naming", "java.prefs", "java.sql", "jdk.unsupported")
