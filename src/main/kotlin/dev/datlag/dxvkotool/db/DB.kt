@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.transformLatest
 import java.io.File
 
 object DB {
@@ -30,7 +30,7 @@ object DB {
     val otherGamesFlat: Flow<List<SelectGamesWithCaches>> =
         database.otherGameQueries.selectGamesWithCaches().asFlow().mapToList(Dispatchers.IO)
 
-    val otherGames = otherGamesFlat.transform { games ->
+    val otherGames = otherGamesFlat.transformLatest { games ->
         val gameList = mutableListOf<Game.Other>()
 
         games.forEach { game ->
@@ -38,7 +38,9 @@ object DB {
             if (!gamePath.existsSafely()) {
                 return@forEach
             }
-            val existingGame = gameList.firstOrNull { it.path == gamePath || it.path.absolutePath.equals(gamePath.absolutePath, true) }
+            val existingGame = gameList.firstOrNull {
+                it.path == gamePath || it.path.absolutePath.equals(gamePath.absolutePath, true)
+            }
 
             if (existingGame != null) {
                 val cacheList = existingGame.caches.value.toMutableList()
@@ -59,7 +61,7 @@ object DB {
             }
         }
 
-        return@transform emit(gameList.toList())
+        return@transformLatest emit(gameList.toList())
     }.flowOn(Dispatchers.IO)
 
 }

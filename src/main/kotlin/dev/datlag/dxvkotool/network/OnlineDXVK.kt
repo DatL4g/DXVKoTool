@@ -35,7 +35,21 @@ object OnlineDXVK {
             async {
                 runCatching {
                     Constants.githubService.getRepoStructure(it.owner, it.repo, it.branch)
-                }.getOrNull()
+                }.getOrNull() ?: run {
+                    val branchList = runCatching {
+                        Constants.githubService.getBranches(it.owner, it.repo)
+                    }.getOrNull() ?: emptyList()
+
+                    val matchingBranch = branchList.firstOrNull { branch ->
+                        branch.name.equals(it.branch, true)
+                    } ?: branchList.firstOrNull()
+
+                    matchingBranch?.let { branch ->
+                        runCatching {
+                            Constants.githubService.getRepoStructure(it.owner, it.repo, branch.name)
+                        }.getOrNull()
+                    }
+                }
             }
         }.awaitAll().filterNotNull()
 

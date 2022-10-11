@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.transformLatest
 import java.io.File
 
 sealed class Game(
@@ -38,7 +38,7 @@ sealed class Game(
             connectDBItems
         ) { t1, t2, _ ->
             t1 to t2
-        }.transform { (repoStructures, _) ->
+        }.transformLatest { (repoStructures, _) ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
             matchingCacheWithItem.forEach { (t, u) ->
                 val cacheInfo = if (u == null) {
@@ -52,7 +52,7 @@ sealed class Game(
                 }
                 t.info.emit(cacheInfo)
             }
-            return@transform emit(matchingCacheWithItem.keys)
+            return@transformLatest emit(matchingCacheWithItem)
         }
     }
 
