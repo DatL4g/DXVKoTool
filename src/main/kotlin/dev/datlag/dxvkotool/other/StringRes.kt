@@ -66,6 +66,7 @@ interface AppStringRes {
 
     val select: String
     val selectMatchingDxvkCache: String
+    val settings: String
 }
 
 object StringRes {
@@ -138,6 +139,7 @@ object StringRes {
 
         override val select: String = "Select"
         override val selectMatchingDxvkCache: String = "Select the matching dxvk-cache info file"
+        override val settings: String = "Settings"
     }
 
     fun get() = en

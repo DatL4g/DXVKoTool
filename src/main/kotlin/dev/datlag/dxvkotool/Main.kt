@@ -17,13 +17,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.singleWindowApplication
+import app.softwork.routingcompose.DesktopRouter
 import dev.datlag.dxvkotool.io.AppIO
 import dev.datlag.dxvkotool.io.LegendaryIO
 import dev.datlag.dxvkotool.io.SteamIO
 import dev.datlag.dxvkotool.network.OnlineDXVK
+import dev.datlag.dxvkotool.other.Routing
 import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.compose.fab.FABContainer
 import dev.datlag.dxvkotool.ui.compose.game.GameList
+import dev.datlag.dxvkotool.ui.compose.settings.Settings
 import dev.datlag.dxvkotool.ui.compose.toolbar.ToolBar
 import dev.datlag.dxvkotool.ui.theme.AppTheme
 
@@ -42,21 +45,19 @@ fun App() {
     LegendaryIO.addGamesToDB(coroutineScope)
 
     CompositionLocalProvider(LocalSnackbarHost provides scaffoldState.snackbarHostState) {
-        AppTheme {
-            Scaffold(
-                topBar = {
-                    ToolBar(selectedGameTypeIndex)
-                },
-                scaffoldState = scaffoldState,
-                floatingActionButton = {
-                    FABContainer()
-                }
+        Scaffold(
+            topBar = {
+                ToolBar(selectedGameTypeIndex)
+            },
+            scaffoldState = scaffoldState,
+            floatingActionButton = {
+                FABContainer()
+            }
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-                ) {
-                    GameList(selectedGameTypeIndex)
-                }
+                GameList(selectedGameTypeIndex)
             }
         }
     }
@@ -66,5 +67,14 @@ fun main() = singleWindowApplication(
     title = StringRes.get().name
 ) {
     AppIO.loadAppIcon(this.window, rememberCoroutineScope())
-    App()
+    AppTheme {
+        DesktopRouter("/") {
+            route(Routing.SETTINGS) {
+                Settings()
+            }
+            noMatch {
+                App()
+            }
+        }
+    }
 }

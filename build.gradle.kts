@@ -33,6 +33,7 @@ dependencies {
     implementation("org.jetbrains.compose.material3:material3:$composeVersion")
     implementation("org.jetbrains.compose.material:material-icons-extended:$composeVersion")
     implementation("io.github.vincenzopalazzo:material-ui-swing:1.1.4")
+    implementation("app.softwork:routing-compose:0.2.8")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
