@@ -7,6 +7,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import app.softwork.routingcompose.Router
 import dev.datlag.dxvkotool.io.LegendaryIO
 import dev.datlag.dxvkotool.io.SteamIO
+import dev.datlag.dxvkotool.other.Routing
 import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.compose.InfoDialog
 
@@ -30,6 +33,7 @@ fun ToolBar(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val isDialogOpen = remember { mutableStateOf(false) }
+    val router = Router.current
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TopAppBar(
@@ -60,6 +64,15 @@ fun ToolBar(
                     Icon(
                         Icons.Filled.Refresh,
                         StringRes.get().reload,
+                        tint = MaterialTheme.colorScheme.onTertiary
+                    )
+                }
+                IconButton(onClick = {
+                    router.navigate(Routing.SETTINGS)
+                }) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        StringRes.get().settings,
                         tint = MaterialTheme.colorScheme.onTertiary
                     )
                 }
