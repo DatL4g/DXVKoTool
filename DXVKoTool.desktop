@@ -1,6 +1,9 @@
 [Desktop Entry]
+Type=Application
+Encoding=UTF-8
 Name=DXVKoTool
+Comment=The DXVKoTool extracts DXVK caches of games automatically and can update them with newer caches
 Exec=dxvkotool
 Icon=DXVKoTool
-Type=Application
+Terminal=False
 Categories=Utility;
