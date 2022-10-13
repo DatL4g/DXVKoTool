@@ -22,7 +22,8 @@ sealed class CacheInfo {
             text = StringRes.get().noneFound,
             icon = Icons.Filled.Clear,
             isDownload = false,
-            isMerge = false
+            isMerge = false,
+            isRepair = false
         )
     }
 
@@ -34,14 +35,16 @@ sealed class CacheInfo {
                 text = StringRes.get().unavailable,
                 icon = Icons.Filled.Clear,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         } else {
             UpdateButtonInfo(
                 text = StringRes.get().download,
                 icon = Icons.Filled.FileDownload,
                 isDownload = true,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
     }
@@ -52,7 +55,8 @@ sealed class CacheInfo {
                 text = StringRes.get().loading,
                 icon = Icons.Filled.HourglassBottom,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
 
@@ -61,7 +65,8 @@ sealed class CacheInfo {
                 text = StringRes.get().downloading,
                 icon = Icons.Filled.HourglassBottom,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
 
@@ -70,7 +75,8 @@ sealed class CacheInfo {
                 text = StringRes.get().loading,
                 icon = Icons.Filled.HourglassBottom,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
     }
@@ -88,14 +94,16 @@ sealed class CacheInfo {
                         text = StringRes.get().merge,
                         icon = Icons.Filled.MergeType,
                         isDownload = false,
-                        isMerge = true
+                        isMerge = true,
+                        isRepair = false
                     )
                 } else {
                     UpdateButtonInfo(
                         text = StringRes.get().upToDate,
                         icon = Icons.Filled.Check,
                         isDownload = false,
-                        isMerge = false
+                        isMerge = false,
+                        isRepair = false
                     )
                 }
             }
@@ -109,7 +117,8 @@ sealed class CacheInfo {
             text = if (this.success) StringRes.get().merged else StringRes.get().error,
             icon = if (this.success) Icons.Filled.Check else Icons.Filled.Clear,
             isDownload = false,
-            isMerge = false
+            isMerge = false,
+            isRepair = false
         )
     }
 
@@ -120,7 +129,8 @@ sealed class CacheInfo {
                 text = StringRes.get().detecting,
                 icon = Icons.Filled.InsertDriveFile,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
 
@@ -129,7 +139,8 @@ sealed class CacheInfo {
                 text = StringRes.get().extracting,
                 icon = Icons.Filled.Archive,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
 
@@ -138,7 +149,8 @@ sealed class CacheInfo {
                 text = StringRes.get().matching,
                 icon = Icons.Filled.Search,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
 
@@ -147,19 +159,33 @@ sealed class CacheInfo {
                 text = StringRes.get().creating,
                 icon = Icons.Filled.Build,
                 isDownload = false,
-                isMerge = false
+                isMerge = false,
+                isRepair = false
             )
         }
     }
 
     sealed class Error : CacheInfo() {
+
+        data class InvalidEntries(
+            val amount: Int
+        ) : Error() {
+            override fun toButtonInfo(gameCache: DxvkStateCache) = UpdateButtonInfo(
+                text = StringRes.get().repair,
+                icon = Icons.Filled.Build,
+                isDownload = false,
+                isMerge = false,
+                isRepair = true
+            )
+        }
         object Download : Error()
 
         override fun toButtonInfo(gameCache: DxvkStateCache) = UpdateButtonInfo(
             text = StringRes.get().error,
             icon = Icons.Filled.Clear,
             isDownload = false,
-            isMerge = false
+            isMerge = false,
+            isRepair = false
         )
     }
 
@@ -167,6 +193,7 @@ sealed class CacheInfo {
         text = StringRes.get().unknown,
         icon = Icons.Filled.QuestionAnswer,
         isDownload = false,
-        isMerge = false
+        isMerge = false,
+        isRepair = false
     )
 }

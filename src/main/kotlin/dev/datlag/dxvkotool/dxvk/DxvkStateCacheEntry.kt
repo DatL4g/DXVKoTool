@@ -68,16 +68,17 @@ data class DxvkStateCacheEntry(
     }
 
     companion object {
-        fun fromReader(reader: FileChannel, header: DxvkStateCache.Header): Result<DxvkStateCacheEntry> = runCatching {
+        fun fromReader(reader: FileChannel, header: DxvkStateCache.Header): Result<DxvkStateCacheEntry?> = runCatching {
             val entry = if (header.edition.isLegacy()) {
                 fromReaderLegacy(reader, header.entrySize)
             } else {
                 fromReaderStandard(reader)
             }.getOrThrow()
             if (!entry.isValid()) {
-                throw DXVKException.InvalidEntry
+                null
+            } else {
+                entry
             }
-            entry
         }
 
         private fun fromReaderStandard(reader: FileChannel): Result<DxvkStateCacheEntry> = runCatching {

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -70,11 +71,21 @@ fun GameCacheButtons(
                             val mergeResult = game.mergeCache(cache)
                             snackbarHost.showFromResult(mergeResult, String())
                         }
+                    } else if (updateInfo.isRepair) {
+                        coroutineScope.launch(Dispatchers.IO) {
+                            val repairResult = game.repairCache(cache)
+                            snackbarHost.showFromResult(repairResult, String())
+                        }
                     }
                 },
                 modifier = Modifier.weight(1F),
-                enabled = updateInfo.isDownload || updateInfo.isMerge,
-                shape = Shape.LeftRoundedShape
+                enabled = updateInfo.isDownload || updateInfo.isMerge || updateInfo.isRepair,
+                shape = Shape.LeftRoundedShape,
+                colors = if (updateInfo.isRepair) {
+                    ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError)
+                } else {
+                    ButtonDefaults.buttonColors()
+                }
             ) {
                 Icon(updateInfo.icon, updateInfo.text, modifier = Modifier.size(ButtonDefaults.IconSize))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))

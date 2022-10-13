@@ -3,6 +3,7 @@ package dev.datlag.dxvkotool.ui.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.AwtWindow
+import dev.datlag.dxvkotool.LocalWindow
 import dev.datlag.dxvkotool.common.canReadSafely
 import dev.datlag.dxvkotool.common.canWriteSafely
 import dev.datlag.dxvkotool.common.existsSafely
@@ -22,80 +23,84 @@ import javax.swing.filechooser.FileNameExtensionFilter
 fun SaveFileDialog(
     fileName: String,
     onCloseRequest: (file: File?) -> Unit
-) = AwtWindow(
-    create = {
-        val parent: Frame? = null
-        object : FileDialog(parent, StringRes.get().save, SAVE) {
-            override fun setVisible(value: Boolean) {
-                super.setVisible(value)
-                if (value) {
-                    if (directory != null && file != null) {
-                        val destFile = File(directory, file)
-                        if (destFile.existsSafely()) {
-                            if (destFile.canReadSafely() && destFile.canWriteSafely()) {
-                                onCloseRequest(destFile)
+) {
+    val parent: Frame = LocalWindow.current
+    return AwtWindow(
+        create = {
+            object : FileDialog(parent, StringRes.get().save, SAVE) {
+                override fun setVisible(value: Boolean) {
+                    super.setVisible(value)
+                    if (value) {
+                        if (directory != null && file != null) {
+                            val destFile = File(directory, file)
+                            if (destFile.existsSafely()) {
+                                if (destFile.canReadSafely() && destFile.canWriteSafely()) {
+                                    onCloseRequest(destFile)
+                                } else {
+                                    onCloseRequest(null)
+                                }
                             } else {
-                                onCloseRequest(null)
+                                if (destFile.parentFile.canWriteSafely()) {
+                                    onCloseRequest(destFile)
+                                } else {
+                                    onCloseRequest(null)
+                                }
                             }
                         } else {
-                            if (destFile.parentFile.canWriteSafely()) {
-                                onCloseRequest(destFile)
-                            } else {
-                                onCloseRequest(null)
-                            }
+                            onCloseRequest(null)
                         }
-                    } else {
-                        onCloseRequest(null)
                     }
                 }
+            }.apply {
+                directory = Constants.userDir
+                file = fileName
             }
-        }.apply {
-            directory = Constants.userDir
-            file = fileName
+        },
+        dispose = FileDialog::dispose,
+        update = {
+            it.toFront()
         }
-    },
-    dispose = FileDialog::dispose,
-    update = {
-        it.toFront()
-    }
-)
+    )
+}
 
 @Composable
 fun LoadFileDialog(
     title: String,
     onCloseRequest: (file: File?) -> Unit,
-) = AwtWindow(
-    create = {
-        val parent: Frame? = null
-        object : FileDialog(parent, StringRes.get().load, LOAD) {
-            override fun setVisible(value: Boolean) {
-                super.setVisible(value)
-                if (value) {
-                    if (file != null && directory != null) {
-                        val loadFile = File(directory, file)
-                        if (loadFile.existsSafely() && loadFile.canReadSafely()) {
-                            onCloseRequest(loadFile)
+) {
+    val parent = LocalWindow.current
+    return AwtWindow(
+        create = {
+            object : FileDialog(parent, StringRes.get().load, LOAD) {
+                override fun setVisible(value: Boolean) {
+                    super.setVisible(value)
+                    if (value) {
+                        if (file != null && directory != null) {
+                            val loadFile = File(directory, file)
+                            if (loadFile.existsSafely() && loadFile.canReadSafely()) {
+                                onCloseRequest(loadFile)
+                            } else {
+                                onCloseRequest(null)
+                            }
                         } else {
                             onCloseRequest(null)
                         }
-                    } else {
-                        onCloseRequest(null)
                     }
                 }
+            }.apply {
+                directory = Constants.userDir
+                setFilenameFilter { _, name ->
+                    name.endsWith(".dxvk-cache", true)
+                }
+                this.title = title
             }
-        }.apply {
-            directory = Constants.userDir
-            setFilenameFilter { _, name ->
-                name.endsWith(".dxvk-cache", true)
-            }
-            this.title = title
+        },
+        dispose = FileDialog::dispose,
+        update = {
+            it.toFront()
         }
-    },
-    dispose = FileDialog::dispose,
-    update = {
-        it.toFront()
-    }
-)
+    )
+}
 
 @Composable
 fun SaveJFileDialog(

@@ -6,5 +6,6 @@ data class UpdateButtonInfo(
     val text: String,
     val icon: ImageVector,
     val isDownload: Boolean,
-    val isMerge: Boolean
+    val isMerge: Boolean,
+    val isRepair: Boolean
 )

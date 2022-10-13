@@ -178,25 +178,39 @@ data class DxvkStateCache(
     }
 
     companion object {
-        fun fromFile(file: File): Result<DxvkStateCache> = runCatching {
+        suspend fun fromFile(file: File): Result<DxvkStateCache> = runSuspendCatching {
             val reader = FileChannel.open(file.toPath())
             val cache = fromReader(reader, file).getOrThrow()
             reader.close()
             cache
         }
 
-        fun fromReader(reader: FileChannel, file: File): Result<DxvkStateCache> = runCatching {
+        suspend fun fromReader(reader: FileChannel, file: File): Result<DxvkStateCache> = runSuspendCatching {
             val entries: MutableList<DxvkStateCacheEntry> = mutableListOf()
             val header = Header.fromReader(reader).getOrThrow()
+            var invalidEntries = 0
 
             while (true) {
-                val entry = runCatching {
+                val entryResult = runCatching {
                     DxvkStateCacheEntry.fromReader(reader, header).getOrThrow()
-                }.getOrNull() ?: break
-                entries.add(entry)
+                }
+                if (entryResult.isFailure) {
+                    break
+                } else {
+                    val entry = entryResult.getOrNull()
+                    if (entry == null) {
+                        invalidEntries++
+                    } else {
+                        entries.add(entry)
+                    }
+                }
             }
 
-            DxvkStateCache(header, entries.distinctBy { it.hash.array().contentHashCode() }, file)
+            DxvkStateCache(header, entries.distinctBy { it.hash.array().contentHashCode() }, file).apply {
+                if (invalidEntries > 0) {
+                    this.info.emit(CacheInfo.Error.InvalidEntries(invalidEntries))
+                }
+            }
         }
     }
 }
