@@ -9,9 +9,9 @@ selectAll:
 SELECT * FROM SteamGame;
 
 insert:
-INSERT INTO SteamGame(appId, cacheName, repoItem)
+INSERT OR REPLACE INTO SteamGame(appId, cacheName, repoItem)
 VALUES (?, ?, ?);
 
 insertObject:
-INSERT INTO SteamGame(appId, cacheName, repoItem)
+INSERT OR REPLACE INTO SteamGame(appId, cacheName, repoItem)
 VALUES ?;

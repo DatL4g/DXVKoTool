@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import java.io.File
 
@@ -35,12 +36,20 @@ sealed class Game(
                     list
                 }
             },
-            connectDBItems
-        ) { t1, t2, _ ->
-            t1 to t2
-        }.transformLatest { (repoStructures, _) ->
+            connectDBItems,
+            caches.flatMapLatest {
+                combine(it.map { cache -> cache.info }) { list ->
+                    list.any { info -> info is CacheInfo.Loading.Url }
+                }
+            }
+        ) { t1, t2, _, t4 ->
+            Triple(t1, t2, t4)
+        }.transformLatest { (repoStructures, _, _) ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
             matchingCacheWithItem.forEach { (t, u) ->
+                if (t.info.value is CacheInfo.Error.InvalidEntries) {
+                    return@forEach
+                }
                 val cacheInfo = if (u == null) {
                     CacheInfo.None
                 } else {
@@ -70,6 +79,11 @@ sealed class Game(
         }
 
         caches.emit(currentCaches)
+    }
+
+    suspend fun repairCache(cache: DxvkStateCache) = runSuspendCatching {
+        cache.writeTo(cache.file, false).isSuccess
+        cache.info.emit(CacheInfo.Loading.Url)
     }
 
     private suspend fun restoreFile(cache: DxvkStateCache, restoreFile: File) = runSuspendCatching {
