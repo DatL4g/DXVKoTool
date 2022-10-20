@@ -40,8 +40,8 @@ jobs:
           cp ./build/release/main/app/DXVKoTool/lib/DXVKoTool.png ./build/release/main/image/DXVKoTool/
           cp -r ./build/release/main/app/DXVKoTool/bin ./build/release/main/image/DXVKoTool/usr/
           cp -r ./build/release/main/app/DXVKoTool/lib ./build/release/main/image/DXVKoTool/usr/
-          ./build/release/main/image/appimagetool.AppImage ./build/release/main/image/DXVKoTool ./build/release/main/image/DXVKoTool.AppImage
-          tar cJf ./build/release/main/app/DXVKoTool.tar.xz ./build/release/main/app/DXVKoTool
+          ./build/release/main/image/appimagetool.AppImage ./build/release/main/image/DXVKoTool ./build/release/main/image/DXVKoTool-${{  github.ref_name }}-x86_64.AppImage
+          tar cJf ./build/release/main/app/DXVKoTool-${{  github.ref_name }}-x86_64.tar.xz ./build/release/main/app/DXVKoTool
 
       - name: Execute packaging on Windows
         if: matrix.os == 'windows-latest'
@@ -56,8 +56,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./build/release/main/app/DXVKoTool.tar.xz
-            ./build/release/main/image/DXVKoTool.AppImage
+            ./build/release/main/app/DXVKoTool-*.tar.xz
+            ./build/release/main/image/DXVKoTool-*.AppImage
             ./build/release/main/deb/*.deb
             ./build/release/main/exe/*.exe
             ./build/release/main/msi/*.msi

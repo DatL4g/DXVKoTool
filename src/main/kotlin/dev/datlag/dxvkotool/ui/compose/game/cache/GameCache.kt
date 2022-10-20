@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,6 +21,7 @@ import dev.datlag.dxvkotool.LocalSnackbarHost
 import dev.datlag.dxvkotool.common.showFromResult
 import dev.datlag.dxvkotool.dxvk.DxvkStateCache
 import dev.datlag.dxvkotool.model.game.Game
+import dev.datlag.dxvkotool.model.game.cache.CacheInfo
 import dev.datlag.dxvkotool.other.Constants
 import dev.datlag.dxvkotool.other.StringRes
 import dev.datlag.dxvkotool.ui.compose.CombinedSaveFileDialog
@@ -31,7 +34,7 @@ import kotlinx.coroutines.launch
 fun GameCache(game: Game, cache: DxvkStateCache) {
     val coroutineScope = rememberCoroutineScope()
     val isExportOpen = remember { mutableStateOf(false) }
-
+    val info by cache.info.collectAsState()
     val snackbarHost = LocalSnackbarHost.current
     val isBackupOpen = remember { mutableStateOf(false) }
 
@@ -75,6 +78,13 @@ fun GameCache(game: Game, cache: DxvkStateCache) {
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 1
             )
+            if (info is CacheInfo.Error.InvalidEntries) {
+                Text(
+                    text = StringRes.get().invalidEntriesPlaceholder.format((info as? CacheInfo.Error.InvalidEntries?)?.amount ?: 0),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    maxLines = 1
+                )
+            }
         }
         GameCacheButtons(game, cache, isExportOpen, isBackupOpen)
     }

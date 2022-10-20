@@ -69,6 +69,7 @@ interface AppStringRes {
     val settings: String
     val back: String
     val repair: String
+    val invalidEntriesPlaceholder: String
 }
 
 object StringRes {
@@ -144,6 +145,7 @@ object StringRes {
         override val settings: String = "Settings"
         override val back: String = "Back"
         override val repair: String = "Repair"
+        override val invalidEntriesPlaceholder: String = "Invalid entries: %d"
     }
 
     fun get() = en

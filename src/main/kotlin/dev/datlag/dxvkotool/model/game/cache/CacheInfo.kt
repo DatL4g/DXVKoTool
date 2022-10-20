@@ -168,7 +168,8 @@ sealed class CacheInfo {
     sealed class Error : CacheInfo() {
 
         data class InvalidEntries(
-            val amount: Int
+            val amount: Int,
+            var afterFixInfo: CacheInfo = Loading.Url
         ) : Error() {
             override fun toButtonInfo(gameCache: DxvkStateCache) = UpdateButtonInfo(
                 text = StringRes.get().repair,

@@ -26,8 +26,6 @@ sealed class Game(
     open val caches: MutableStateFlow<List<DxvkStateCache>>
 ) {
 
-    abstract val connectDBItems: Flow<Any>
-
     val cacheInfoCollector by lazy {
         combine(
             OnlineDXVK.dxvkRepoStructureFlow,
@@ -35,21 +33,12 @@ sealed class Game(
                 combine(it.map { cache -> cache.associatedRepoItem }) { list ->
                     list
                 }
-            },
-            connectDBItems,
-            caches.flatMapLatest {
-                combine(it.map { cache -> cache.info }) { list ->
-                    list.any { info -> info is CacheInfo.Loading.Url }
-                }
             }
-        ) { t1, t2, _, t4 ->
-            Triple(t1, t2, t4)
-        }.transformLatest { (repoStructures, _, _) ->
+        ) { t1, t2, ->
+            t1 to t2
+        }.transformLatest { (repoStructures, _) ->
             val matchingCacheWithItem = repoStructures.findMatchingGameItem(this@Game)
             matchingCacheWithItem.forEach { (t, u) ->
-                if (t.info.value is CacheInfo.Error.InvalidEntries) {
-                    return@forEach
-                }
                 val cacheInfo = if (u == null) {
                     CacheInfo.None
                 } else {
@@ -59,7 +48,11 @@ sealed class Game(
                     val contentUrl = downloadUrl.getOrNull()?.getUrlInContent()
                     CacheInfo.Url(contentUrl)
                 }
-                t.info.emit(cacheInfo)
+                if (t.info.value is CacheInfo.Error.InvalidEntries) {
+                    (t.info.value as? CacheInfo.Error.InvalidEntries)?.afterFixInfo = cacheInfo
+                } else {
+                    t.info.emit(cacheInfo)
+                }
             }
             return@transformLatest emit(matchingCacheWithItem)
         }
@@ -83,7 +76,7 @@ sealed class Game(
 
     suspend fun repairCache(cache: DxvkStateCache) = runSuspendCatching {
         cache.writeTo(cache.file, false).isSuccess
-        cache.info.emit(CacheInfo.Loading.Url)
+        cache.info.emit((cache.info.value as? CacheInfo.Error.InvalidEntries)?.afterFixInfo ?: CacheInfo.Loading.Url)
     }
 
     private suspend fun restoreFile(cache: DxvkStateCache, restoreFile: File) = runSuspendCatching {
@@ -115,25 +108,12 @@ sealed class Game(
         val manifest: AppManifest,
         override val path: File,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
-    ) : Game(manifest.name, path, caches) {
-        override val connectDBItems = combine(caches, DB.steamGames) { t1, t2 ->
-            val matchingDbGameItems = t2.filter { it.appId == manifest.appId.toLongOrNull() }
-            matchingDbGameItems.map { dbGame ->
-                val matchingCache = t1.firstOrNull { dbGame.cacheName == it.file.name }
-                matchingCache?.associatedRepoItem?.emit(dbGame.repoItem)
-                matchingCache to dbGame.repoItem
-            }
-        }.distinctUntilChanged()
-    }
+    ) : Game(manifest.name, path, caches)
 
     data class Other(
         override val name: String,
         override val path: File,
         val isEpicGame: Boolean,
         override val caches: MutableStateFlow<List<DxvkStateCache>>
-    ) : Game(name, path, caches) {
-        override val connectDBItems = flow {
-            emit(this.toString())
-        }
-    }
+    ) : Game(name, path, caches)
 }

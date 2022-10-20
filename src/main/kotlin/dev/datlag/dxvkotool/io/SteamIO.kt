@@ -6,6 +6,7 @@ import dev.datlag.dxvkotool.common.isDirectorySafely
 import dev.datlag.dxvkotool.common.listFilesSafely
 import dev.datlag.dxvkotool.common.listFrom
 import dev.datlag.dxvkotool.common.normalize
+import dev.datlag.dxvkotool.db.DB
 import dev.datlag.dxvkotool.model.game.Game
 import dev.datlag.dxvkotool.model.game.steam.AppManifest
 import dev.datlag.dxvkotool.other.Constants
@@ -17,6 +18,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -69,6 +71,26 @@ object SteamIO {
         return steamAppsFolder.normalize()
     }
 
+    val steamAvailablePaths: Flow<List<File>> = flow {
+        emit(
+            listOf(
+                File(Constants.userDir, Constants.STEAM_DEFAULT_ROOT),
+                File(Constants.userDir, Constants.STEAM_SYMLINK_ROOT),
+                File(Constants.STEAM_WINDOWS_DEFAULT_ROOT),
+                File(Constants.STEAM_WINDOWS_NEW_ROOT),
+                File(Constants.userDir, Constants.STEAM_MAC_DEFAULT_ROOT),
+                File(Constants.userDir, Constants.STEAM_FLATPAK_ROOT),
+                File(Constants.userDir, Constants.STEAM_FLATPAK_SYMLINK_ROOT),
+            ).mapNotNull {
+                if (it.existsSafely()) {
+                    it
+                } else {
+                    null
+                }
+            }
+        )
+    }
+
     private val systemSteamAppsFoldersFlow: MutableStateFlow<List<File>> = MutableStateFlow(emptyList())
     private val flatpakSteamAppsFoldersFlow: MutableStateFlow<List<File>> = MutableStateFlow(emptyList())
     private val steamAppsFoldersFlow = combine(systemSteamAppsFoldersFlow, flatpakSteamAppsFoldersFlow) { t1, t2 ->
@@ -103,7 +125,7 @@ object SteamIO {
         })
     }.flowOn(Dispatchers.IO)
 
-    val steamGamesFlow = combine(appManifestFlow, shaderCacheFoldersFlow) { t1, t2 ->
+    val steamGamesFlow = combine(appManifestFlow, shaderCacheFoldersFlow, DB.steamGames) { t1, t2, t3 ->
         val foldersWithManifest = t2.associateWith { file ->
             t1.firstOrNull {
                 it.appId.equals(file.name, true)
@@ -135,11 +157,17 @@ object SteamIO {
                     if (caches.isEmpty()) {
                         null
                     } else {
-                        Game.Steam(
+                        val game = Game.Steam(
                             it.key,
                             it.value,
                             MutableStateFlow(caches)
                         )
+                        val matchingDbGameItems = t3.filter { it.appId == game.manifest.appId.toLongOrNull() }
+                        matchingDbGameItems.map { dbGame ->
+                            val matchingCache = caches.firstOrNull { dbGame.cacheName == it.file.name }
+                            matchingCache?.associatedRepoItem?.emit(dbGame.repoItem)
+                        }
+                        game
                     }
                 }
             }.awaitAll().filterNotNull()
